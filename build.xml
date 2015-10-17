@@ -1,0 +1,72 @@
+<project name="MagneticIISAS-ERD" default="dist" basedir=".">
+
+	<description>
+		Primitive build file for ERD challenge system
+	</description>
+
+	<property name="src" value="src"/>
+    <property name="lib" value="${src}/main/resources"/>
+	<property name="build" value="bin"/>
+	<property name="dist" value="dist"/>
+	<property name="doc" location="doc"/>
+	<property name="erd.jar" value="${dist}/erd.jar"/>
+
+	<target name="init">
+		<tstamp/>
+		<mkdir dir="${build}"/>
+	</target>
+
+	<path id="cp">
+		<pathelement path="${classpath}"/>
+		<fileset dir="${lib}">
+			<include name="**/*.jar"/>
+		</fileset>
+	</path>
+
+	<target name="compile" depends="init" unless="eclipse.running"
+			description="Compile the ERD  source">
+		<javac srcdir="${src}/main/java" includeantruntime="false" debug="true"
+				debuglevel="lines,source" destdir="${build}" encoding="UTF-8"
+				target="1.6" source="1.6">
+				<classpath refid="cp" />
+		</javac>
+	</target>
+
+	<target name="dist" depends="compile"
+			description="Generate the ERD distribution">
+		<jar jarfile="${erd.jar}" basedir="${build}" includes="**/*">
+			<manifest>
+				<attribute name="Built-By" value="${user.name}"/>
+				<attribute name="Specification-Title" value="ERD "/>
+				<attribute name="Specification-Version" value="${version}"/>
+				<attribute name="Specification-Vendor" value="MagneticIISAS"/>
+				<attribute name="Implementation-Title" value="ERD Prototype "/>
+				<attribute name="Implementation-Version" value="${version} ${TODAY}"/>
+				<attribute name="Implementation-Vendor" value="MagneticIISAS"/>
+			</manifest>
+			<!--
+			<zipfileset src="${lib}/commons-lang3-3.1.jar" /> 
+			<fileset dir="${conf}">
+		        <include name="config.properties"/>
+    		</fileset>
+    		-->
+		</jar>
+	</target>
+
+
+	<target name="clean" description="Clean up compiled files and directories">
+		<!-- Delete the ${build} and ${dist} directory trees -->
+		<delete dir="${build}"/>
+		<delete file="${erd.jar}"/>
+		<delete dir="${dist}"/>
+	</target>
+
+	<path id="tp">
+		<pathelement path="${classpath}" />
+		<pathelement path="${erd.jar}" />
+		<fileset dir="${lib}">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+
+</project>
