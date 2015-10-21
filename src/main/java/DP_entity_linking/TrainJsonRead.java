@@ -75,7 +75,14 @@ public class TrainJsonRead {
         stream.end();
         stream.close();
         String newQuery = strBuilder.toString().trim();
-        this.retrieve(newQuery, numSearchRes);
+        this.retrieve(r.getUtterance(), newQuery, numSearchRes);
+    }
+
+    public boolean backMapped(String query,  String form) {
+
+        boolean isMapped;
+        isMapped  = query.toLowerCase().contains(form.toLowerCase());
+        return isMapped;
     }
 
     private final Query buildLuceneQuery(final String queryIn, final Analyzer analyzerIn) throws ParseException {
@@ -92,9 +99,10 @@ public class TrainJsonRead {
         return queryL;
     }
 
-    private void retrieve(String query, int numSearchRes) throws IOException, ParseException {
+    private void retrieve(String original, String query, int numSearchRes) throws IOException, ParseException {
 
         IndexSearcher indexSearcher = new IndexSearcher(IndexReader.open(directory));
+        boolean backMapped;
         Similarity[] sims = {
                 new BM25Similarity((float) 1.75, (float) 0.4),
                 new LMJelinekMercerSimilarity((float) 0.0003),
@@ -107,7 +115,12 @@ public class TrainJsonRead {
         ScoreDoc[] hits = results.scoreDocs;
         for (int i = 0; i < hits.length; i++) {
             Document doc = indexSearcher.doc(hits[i].doc);
-            LOGGER.info(doc.get("title"));
+            backMapped = this.backMapped(original, doc.get("title"));
+            if (backMapped) {
+                LOGGER.info(doc.get("title") + "--- back mapped: " + backMapped + "----");
+            } else {
+                LOGGER.info(doc.get("title"));
+            }
         }
     }
 
