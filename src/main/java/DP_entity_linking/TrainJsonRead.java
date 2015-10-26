@@ -10,7 +10,6 @@ import org.apache.log4j.PropertyConfigurator;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
-import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
 import org.apache.lucene.queryparser.classic.ParseException;
@@ -37,12 +36,16 @@ public class TrainJsonRead {
     private ObjectMapper mapper;
     private Directory directory = new MMapDirectory(new File("/workspace/erd/index_wikipedia"));
     private Analyzer analyzer;
-    private int numSearchRes = 5;
-    public ArrayList<IndexSearcher> searchers = new ArrayList<IndexSearcher>();
+    private int numSearchRes = 20;
+    private ArrayList<IndexSearcher> searchers = new ArrayList<IndexSearcher>();
+    private IEvaluation iEvaluation;
+    private IndexSearcher indexSearcher;
 
     public TrainJsonRead() throws IOException {
         analyzer = new CountryAnalyzer();
         mapper = new ObjectMapper();
+        indexSearcher = new IndexSearcher(IndexReader.open(directory));
+        iEvaluation = new SimpleEvaluation(indexSearcher);
     }
 
     public static class Records extends ArrayList<Record> {
@@ -75,13 +78,13 @@ public class TrainJsonRead {
         stream.end();
         stream.close();
         String newQuery = strBuilder.toString().trim();
-        this.retrieve(r.getUtterance(), newQuery, numSearchRes);
+        this.retrieve(r, newQuery, numSearchRes);
     }
 
-    public boolean backMapped(String query,  String form) {
+    public boolean backMapped(String query, String form) {
 
         boolean isMapped;
-        isMapped  = query.toLowerCase().contains(form.toLowerCase());
+        isMapped = query.toLowerCase().contains(form.toLowerCase());
         return isMapped;
     }
 
@@ -99,9 +102,9 @@ public class TrainJsonRead {
         return queryL;
     }
 
-    private void retrieve(String original, String query, int numSearchRes) throws IOException, ParseException {
+    private Statistika statistika = new Statistika();
 
-        IndexSearcher indexSearcher = new IndexSearcher(IndexReader.open(directory));
+    private void retrieve(Record record, String query, int numSearchRes) throws IOException, ParseException {
         boolean backMapped;
         Similarity[] sims = {
                 new BM25Similarity((float) 1.75, (float) 0.4),
@@ -113,15 +116,21 @@ public class TrainJsonRead {
         Query queryL = this.buildLuceneQuery(query, analyzer);
         TopDocs results = indexSearcher.search(queryL, numSearchRes);
         ScoreDoc[] hits = results.scoreDocs;
+
+        String answer = record.getAnswer();
+        float score = iEvaluation.getScore(hits, answer);
+        statistika.count(score);
+        LOGGER.info(record.getQuestion() + ", " + answer + " => " + score);
+        /*
         for (int i = 0; i < hits.length; i++) {
             Document doc = indexSearcher.doc(hits[i].doc);
-            backMapped = this.backMapped(original, doc.get("title"));
+            backMapped = this.backMapped(record.getQuestion(), doc.get("title"));
             if (backMapped) {
                 LOGGER.info(doc.get("title") + "--- back mapped: " + backMapped + "----");
             } else {
                 LOGGER.info(doc.get("title"));
             }
-        }
+        }*/
     }
 
     /**
@@ -134,6 +143,10 @@ public class TrainJsonRead {
             LOGGER.info("------------" + record.getUtterance() + "--------------");
             this.retrieveRecords(record);
 
+        }
+
+        for (Map.Entry entry : statistika.entrySet()) {
+            LOGGER.info(entry.getKey() + " " + entry.getValue());
         }
     }
 

@@ -1,19 +1,20 @@
 package DP_entity_linking;
 
+import java.net.URI;
+
 /**
  * Created by miroslav.kudlac on 10/3/2015.
  */
 public class Record {
     private String utterance;
-    private String url;
+    private URI url;
     private String targetValue;
 
-
-    public String getUrl() {
+    public URI getUrl() {
         return url;
     }
 
-    public void setUrl(String url) {
+    public void setUrl(URI url) {
         this.url = url;
     }
 
@@ -33,14 +34,23 @@ public class Record {
         this.utterance = utterance;
     }
 
+    public String getAnswer() {
+        String path = this.getUrl().getPath();
+        path = path.substring(path.lastIndexOf('/') + 1);
+        String answer = path.replace("_", " ");
+        return answer;
+    }
+
+    public String getQuestion() {
+        return getUtterance();
+    }
 
     @Override
     public String toString() {
-        url = url.replaceFirst(".*/(\\w+).*","$1").replace("_", " ");
-        utterance = utterance.replaceAll("\\b[\\w']{1,3}\\b", "").replaceAll("[^a-z0-9]", " ").replaceAll("( )+", " ");
         return "Record{" +
                 "utterance='" + utterance + '\'' +
-                ", url='" + url + '\'' +
+                ", url=" + url +
+                ", targetValue='" + targetValue + '\'' +
                 '}';
     }
 }

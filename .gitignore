@@ -1,4 +1,3 @@
-#Ignore MAVEN settings
 target/
 
 #Ignore IDEA settings
@@ -11,23 +10,11 @@ target/
 .settings/
 .project
 .classpath
-Servers/
 bin/
 */.metadata/
 */.settings/
 */.project
 */.classpath
 
-#Ignore Aston structure
-apache-tomcat/
-
-# Ignore node, bower, generated structure
-node/
-node_modules/
-war/bower_components/
-bower_components/
-war/dist/
 */.tmp
 *.log
-overlays
-war/WEB-INF/xlsx/OM*.xlsx

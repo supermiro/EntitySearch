@@ -53,7 +53,7 @@ public class CountryAnalyzerTest {
                // new DefaultSimilarity()
         };
         indexSearcher.setSimilarity(new MultiSimilarity(sims));
-        String question = "Religion in pakistan";
+        String question = " what are the 7 sacraments of the catholic church?";
         TokenStream stream = analyzer.tokenStream(null, new StringReader(question));
         CharTermAttribute cattr = stream.addAttribute(CharTermAttribute.class);
         stream.reset();
