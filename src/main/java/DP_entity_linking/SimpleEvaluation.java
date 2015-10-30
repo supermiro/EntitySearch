@@ -36,6 +36,13 @@ public class SimpleEvaluation implements IEvaluation {
         return a.toLowerCase().contains(b.toLowerCase()) || b.toLowerCase().contains(a.toLowerCase());
     }
 
+    /**
+     *
+     * @param hits
+     * @param answer
+     * @return
+     * @throws IOException
+     */
     public float getScore(ScoreDoc[] hits, String answer) throws IOException {
         List<Document> documentList = new ArrayList<>();
         for (int i = 0; i < hits.length; i++) {
