@@ -38,6 +38,12 @@ public class CountryAnalyzerTest {
         queryL = parser.parse(query);
         return queryL;
     }
+    public boolean backMapped(String query, String form) {
+
+        boolean isMapped;
+        isMapped = query.toLowerCase().contains(form.toLowerCase());
+        return isMapped;
+    }
     @Test
     public void testCreateComponents() throws Exception {
         Analyzer analyzer = new CountryAnalyzer();
@@ -53,7 +59,7 @@ public class CountryAnalyzerTest {
                // new DefaultSimilarity()
         };
         indexSearcher.setSimilarity(new MultiSimilarity(sims));
-        String question = " what are the 7 sacraments of the catholic church?";
+        String question = " Religion in france blabblalblabla";
         TokenStream stream = analyzer.tokenStream(null, new StringReader(question));
         CharTermAttribute cattr = stream.addAttribute(CharTermAttribute.class);
         stream.reset();
@@ -72,6 +78,7 @@ public class CountryAnalyzerTest {
         ScoreDoc[] hits = results.scoreDocs;
         for (int j = 0; j < hits.length; j++) {
             Document doc = indexSearcher.doc(hits[j].doc);
+            boolean backMapped = this.backMapped(question, doc.get("title"));
             float score = hits[j].score/300;
             System.out.println(doc.get("title") + " ALTER " +  doc.get("alt")  + " fb_name " +  doc.get("fb_name") + " SCORE " + score);
         }

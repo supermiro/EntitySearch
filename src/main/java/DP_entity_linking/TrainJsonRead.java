@@ -93,16 +93,16 @@ public class TrainJsonRead {
         String query = queryIn;
         String[] fields = null;
         Map<String, Float> boosts = new HashMap<String, Float>();
-        fields = new String[]{"title", "fb_alias", "alt", "fb_name"};
+        fields = new String[]{"title", "fb_alias", "alt", "fb_name", "abs"};
         //fields = new String[] { "title", "anchor", "alt", "fb_name", "abs" };
-        //boosts.put("title", (float) 0.4);
+        boosts.put("title", (float) 0.4);
         MultiFieldQueryParser parser = new MultiFieldQueryParser(Version.LUCENE_43, fields, analyzerIn, boosts);
 
         queryL = parser.parse(query);
         return queryL;
     }
 
-    private Statistika statistika = new Statistika();
+    private Statistics statistics = new Statistics();
 
     private void retrieve(Record record, String query, int numSearchRes) throws IOException, ParseException {
         boolean backMapped;
@@ -119,7 +119,7 @@ public class TrainJsonRead {
 
         String answer = record.getAnswer();
         float score = iEvaluation.getScore(hits, answer);
-        statistika.count(score);
+        statistics.count(score);
         LOGGER.info(record.getQuestion() + ", " + answer + " => " + score);
         /*
         for (int i = 0; i < hits.length; i++) {
@@ -145,7 +145,7 @@ public class TrainJsonRead {
 
         }
 
-        for (Map.Entry entry : statistika.entrySet()) {
+        for (Map.Entry entry : statistics.entrySet()) {
             LOGGER.info(entry.getKey() + " " + entry.getValue());
         }
     }
