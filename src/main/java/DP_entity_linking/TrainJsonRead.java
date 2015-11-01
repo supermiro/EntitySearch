@@ -11,12 +11,10 @@ import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.Term;
 import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
 import org.apache.lucene.queryparser.classic.ParseException;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.ScoreDoc;
-import org.apache.lucene.search.TopDocs;
+import org.apache.lucene.search.*;
 import org.apache.lucene.search.similarities.*;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.MMapDirectory;
@@ -99,7 +97,21 @@ public class TrainJsonRead {
         MultiFieldQueryParser parser = new MultiFieldQueryParser(Version.LUCENE_43, fields, analyzerIn, boosts);
 
         queryL = parser.parse(query);
-        return queryL;
+        BooleanQuery categoryQuery = new BooleanQuery();
+        BooleanQuery mainQuery = new BooleanQuery();
+        TermQuery catQuery1 = new TermQuery(new Term("db_category", "person"));
+        TermQuery catQuery2 = new TermQuery(new Term("db_category", "place"));
+        TermQuery catQuery3 = new TermQuery(new Term("db_category", "country"));
+        TermQuery catQuery4 = new TermQuery(new Term("db_category", "movie"));
+        TermQuery catQuery5 = new TermQuery(new Term("db_category", "language"));
+        categoryQuery.add(new BooleanClause(catQuery1, BooleanClause.Occur.SHOULD));
+        categoryQuery.add(new BooleanClause(catQuery2, BooleanClause.Occur.SHOULD));
+        categoryQuery.add(new BooleanClause(catQuery3, BooleanClause.Occur.SHOULD));
+        categoryQuery.add(new BooleanClause(catQuery4, BooleanClause.Occur.SHOULD));
+        categoryQuery.add(new BooleanClause(catQuery5, BooleanClause.Occur.SHOULD));
+        mainQuery.add(new BooleanClause(queryL, BooleanClause.Occur.SHOULD));
+        mainQuery.add(new BooleanClause(categoryQuery, BooleanClause.Occur.MUST));
+        return mainQuery;
     }
 
     private Statistics statistics = new Statistics();
@@ -107,10 +119,11 @@ public class TrainJsonRead {
     private void retrieve(Record record, String query, int numSearchRes) throws IOException, ParseException {
         boolean backMapped;
         Similarity[] sims = {
-                new BM25Similarity((float) 1.75, (float) 0.4),
-                new LMJelinekMercerSimilarity((float) 0.0003),
+                new BM25Similarity((float) 1.79, (float) 0.35),
+                //new LMJelinekMercerSimilarity((float) 0.0003),
+                new LMJelinekMercerSimilarity((float) 0.00001),
                 new LMDirichletSimilarity(),
-                // new DefaultSimilarity()
+                //new DefaultSimilarity(),
         };
         indexSearcher.setSimilarity(new MultiSimilarity(sims));
         Query queryL = this.buildLuceneQuery(query, analyzer);
@@ -121,11 +134,22 @@ public class TrainJsonRead {
         float score = iEvaluation.getScore(hits, answer);
         statistics.count(score);
         LOGGER.info(record.getQuestion() + ", " + answer + " => " + score);
-        /*
-        for (int i = 0; i < hits.length; i++) {
+    // USE FOR BACKMAPPING
+        /*for (int i = 0; i < hits.length; i++) {
             Document doc = indexSearcher.doc(hits[i].doc);
             backMapped = this.backMapped(record.getQuestion(), doc.get("title"));
             if (backMapped) {
+                String question = record.getUtterance();
+                String haystack = doc.get("title").toLowerCase();
+                String backMappedRecord = question.replaceAll(haystack, "").replace("?", "").trim();
+                queryL = this.buildLuceneQuery(backMappedRecord, analyzer);
+                results = indexSearcher.search(queryL, 5);
+                hits = results.scoreDocs;
+
+                answer = record.getAnswer();
+                score = iEvaluation.getScore(hits, answer);
+                statistics.count(score);
+                LOGGER.info(backMappedRecord + ", " + answer + " => " + score);
                 LOGGER.info(doc.get("title") + "--- back mapped: " + backMapped + "----");
             } else {
                 LOGGER.info(doc.get("title"));

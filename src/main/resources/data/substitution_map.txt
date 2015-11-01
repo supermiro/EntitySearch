@@ -1,3 +1,4 @@
+jfk	john f kennedy
 al	alabama
 ak	alaska
 az	arizona

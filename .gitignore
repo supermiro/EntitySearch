@@ -1,5 +1,3 @@
-#target/
-
 #Ignore IDEA settings
 *.iml
 */*.iml
