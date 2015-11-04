@@ -10,7 +10,9 @@ import org.apache.log4j.PropertyConfigurator;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
+import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.IndexableField;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
 import org.apache.lucene.queryparser.classic.ParseException;
@@ -38,11 +40,14 @@ public class TrainJsonRead {
     private ArrayList<IndexSearcher> searchers = new ArrayList<IndexSearcher>();
     private IEvaluation iEvaluation;
     private IndexSearcher indexSearcher;
+    private IndexReader indexreader;
 
     public TrainJsonRead() throws IOException {
         analyzer = new CountryAnalyzer();
         mapper = new ObjectMapper();
-        indexSearcher = new IndexSearcher(IndexReader.open(directory));
+        indexreader = IndexReader.open(directory);
+        indexSearcher = new IndexSearcher(indexreader);
+        int num = indexreader.numDocs();
         iEvaluation = new SimpleEvaluation(indexSearcher);
     }
 
@@ -111,10 +116,12 @@ public class TrainJsonRead {
         categoryQuery.add(new BooleanClause(catQuery5, BooleanClause.Occur.SHOULD));
         mainQuery.add(new BooleanClause(queryL, BooleanClause.Occur.SHOULD));
         mainQuery.add(new BooleanClause(categoryQuery, BooleanClause.Occur.MUST));
-        return mainQuery;
+        return queryL;
     }
 
-    private Statistics statistics = new Statistics();
+    private Statistics<Float> statisticScore = new Statistics();
+    private Statistics<String> statisticDbCategory = new Statistics();
+    private Statistics<String> statisticFbCategory = new Statistics();
 
     private void retrieve(Record record, String query, int numSearchRes) throws IOException, ParseException {
         boolean backMapped;
@@ -132,8 +139,21 @@ public class TrainJsonRead {
 
         String answer = record.getAnswer();
         float score = iEvaluation.getScore(hits, answer);
-        statistics.count(score);
+        statisticScore.count(score);
+
         LOGGER.info(record.getQuestion() + ", " + answer + " => " + score);
+        for (int i = 0; i < hits.length; i++) {
+            Document doc = indexSearcher.doc(hits[i].doc);
+            IndexableField[] dbCats = doc.getFields("db_category");
+            IndexableField[] fbCats = doc.getFields("fb_category");
+            for(IndexableField dbcat : dbCats) {
+                statisticDbCategory.count(dbcat.stringValue());
+            }
+            for(IndexableField fbcat : fbCats) {
+                statisticFbCategory.count(fbcat.stringValue());
+            }
+
+        }
     // USE FOR BACKMAPPING
         /*for (int i = 0; i < hits.length; i++) {
             Document doc = indexSearcher.doc(hits[i].doc);
@@ -142,15 +162,19 @@ public class TrainJsonRead {
                 String question = record.getUtterance();
                 String haystack = doc.get("title").toLowerCase();
                 String backMappedRecord = question.replaceAll(haystack, "").replace("?", "").trim();
-                queryL = this.buildLuceneQuery(backMappedRecord, analyzer);
-                results = indexSearcher.search(queryL, 5);
-                hits = results.scoreDocs;
+                Query queryBackMapped = this.buildLuceneQuery(backMappedRecord, analyzer);
+                TopDocs resultsBackMapped = indexSearcher.search(queryBackMapped, 5);
+                ScoreDoc[] hitsBackMapped = resultsBackMapped.scoreDocs;
 
                 answer = record.getAnswer();
-                score = iEvaluation.getScore(hits, answer);
+                score = iEvaluation.getScore(hitsBackMapped, answer);
                 statistics.count(score);
+                for (int j = 0; j < hitsBackMapped.length; j++) {
+                    Document docBackMapped = indexSearcher.doc(hitsBackMapped[j].doc);
+                    LOGGER.info(docBackMapped.get("title") + " --- back mapped: " + backMapped + " ----");
+                }
                 LOGGER.info(backMappedRecord + ", " + answer + " => " + score);
-                LOGGER.info(doc.get("title") + "--- back mapped: " + backMapped + "----");
+
             } else {
                 LOGGER.info(doc.get("title"));
             }
@@ -169,8 +193,14 @@ public class TrainJsonRead {
 
         }
 
-        for (Map.Entry entry : statistics.entrySet()) {
-            LOGGER.info(entry.getKey() + " " + entry.getValue());
+        for (Map.Entry entry : statisticScore.entrySet()) {
+            LOGGER.info(entry.getKey() + "," + entry.getValue());
+        }
+        for (Map.Entry entry : statisticDbCategory.entrySet()) {
+            LOGGER.info(entry.getKey() + "," + entry.getValue());
+        }
+        for (Map.Entry entry : statisticFbCategory.entrySet()) {
+            LOGGER.info(entry.getKey() + "," + entry.getValue());
         }
     }
 

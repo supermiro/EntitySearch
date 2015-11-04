@@ -45,9 +45,9 @@ public class SimpleEvaluation implements IEvaluation {
      */
     public float getScore(ScoreDoc[] hits, String answer) throws IOException {
         List<Document> documentList = new ArrayList<>();
-        for (int i = 0; i < hits.length; i++) {
-            Document doc = indexSearcher.doc(hits[i].doc);
-            documentList.add(doc);
+            for (int i = 0; i < hits.length; i++) {
+                Document doc = indexSearcher.doc(hits[i].doc);
+                documentList.add(doc);
 
             if (contains(doc, answer)) {
                 return 1f / ( (float) i + 1f);
