@@ -5,12 +5,10 @@ import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.Term;
 import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
 import org.apache.lucene.queryparser.classic.ParseException;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.ScoreDoc;
-import org.apache.lucene.search.TopDocs;
+import org.apache.lucene.search.*;
 import org.apache.lucene.search.similarities.*;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.MMapDirectory;
@@ -31,12 +29,33 @@ public class CountryAnalyzerTest {
         String query = queryIn;
         String[] fields = null;
         Map<String, Float> boosts = new HashMap<String, Float>();
-        fields = new String[] { "title", "anchor", "alt", "fb_name", "abs" };
+        fields = new String[]{"title", "fb_alias", "alt", "fb_name", "abs"};
+        //fields = new String[] { "title", "anchor", "alt", "fb_name", "abs" };
         boosts.put("title", (float) 0.4);
-        //boosts.put("abs", (float) 0.2);
         MultiFieldQueryParser parser = new MultiFieldQueryParser(Version.LUCENE_43, fields, analyzerIn, boosts);
+
         queryL = parser.parse(query);
-        return queryL;
+        BooleanQuery categoryQuery = new BooleanQuery();
+        BooleanQuery mainQuery = new BooleanQuery();
+        TermQuery catQuery1 = new TermQuery(new Term("db_category", "person"));
+        TermQuery catQuery2 = new TermQuery(new Term("db_category", "place"));
+        TermQuery catQuery3 = new TermQuery(new Term("db_category", "country"));
+        TermQuery catQuery4 = new TermQuery(new Term("db_category", "movie"));
+        TermQuery catQuery5 = new TermQuery(new Term("db_category", "language"));
+        categoryQuery.add(new BooleanClause(catQuery1, BooleanClause.Occur.SHOULD));
+        categoryQuery.add(new BooleanClause(catQuery2, BooleanClause.Occur.SHOULD));
+        categoryQuery.add(new BooleanClause(catQuery3, BooleanClause.Occur.SHOULD));
+        categoryQuery.add(new BooleanClause(catQuery4, BooleanClause.Occur.SHOULD));
+        categoryQuery.add(new BooleanClause(catQuery5, BooleanClause.Occur.SHOULD));
+        mainQuery.add(new BooleanClause(queryL, BooleanClause.Occur.SHOULD));
+        mainQuery.add(new BooleanClause(categoryQuery, BooleanClause.Occur.MUST));
+        return mainQuery;
+    }
+    public boolean backMapped(String query, String form) {
+
+        boolean isMapped;
+        isMapped = query.toLowerCase().contains(form.toLowerCase());
+        return isMapped;
     }
     @Test
     public void testCreateComponents() throws Exception {
@@ -53,7 +72,7 @@ public class CountryAnalyzerTest {
                // new DefaultSimilarity()
         };
         indexSearcher.setSimilarity(new MultiSimilarity(sims));
-        String question = "Religion in pakistan";
+        String question = "knossos";
         TokenStream stream = analyzer.tokenStream(null, new StringReader(question));
         CharTermAttribute cattr = stream.addAttribute(CharTermAttribute.class);
         stream.reset();
@@ -72,8 +91,9 @@ public class CountryAnalyzerTest {
         ScoreDoc[] hits = results.scoreDocs;
         for (int j = 0; j < hits.length; j++) {
             Document doc = indexSearcher.doc(hits[j].doc);
+            boolean backMapped = this.backMapped(question, doc.get("title"));
             float score = hits[j].score/300;
-            System.out.println(doc.get("title") + " ALTER " +  doc.get("alt")  + " fb_name " +  doc.get("fb_name") + " SCORE " + score);
+            System.out.println(doc.get("db_category") + " " + doc.get("title") + " ALTER " +  doc.get("alt")  + " fb_name " +  doc.get("fb_name") + " SCORE " + score);
         }
         System.out.println(newQuery);
 

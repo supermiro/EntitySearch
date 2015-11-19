@@ -113,25 +113,6 @@
             </dependency> -->
 
         <dependency>
-            <groupId>kyotocabinet.graph</groupId>
-            <artifactId>--graph</artifactId>
-            <version>1.0.0</version>
-            <scope>system</scope>
-            <systemPath>C:\workspace\erd-challenge\src\main\resources\kyotocabinet.jar
-            </systemPath>
-        </dependency>
-
-        <dependency>
-            <groupId>tokyocabinet.graph</groupId>
-            <artifactId>--graph2</artifactId>
-            <version>1.0.0</version>
-            <scope>system</scope>
-            <systemPath>C:\workspace\erd-challenge\src\main\resources\tokyocabinet.jar
-            </systemPath>
-        </dependency>
-
-
-        <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-compress</artifactId>
             <version>1.5</version>
