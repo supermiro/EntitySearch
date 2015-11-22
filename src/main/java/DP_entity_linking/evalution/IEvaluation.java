@@ -1,4 +1,4 @@
-package DP_entity_linking;
+package DP_entity_linking.evalution;
 
 import org.apache.lucene.search.ScoreDoc;
 

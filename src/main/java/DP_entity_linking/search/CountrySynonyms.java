@@ -1,4 +1,4 @@
-package DP_entity_linking;
+package DP_entity_linking.search;
 
 import org.apache.lucene.analysis.synonym.SynonymMap;
 import org.apache.lucene.util.CharsRef;
