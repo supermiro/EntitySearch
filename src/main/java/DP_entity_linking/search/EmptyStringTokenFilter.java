@@ -1,4 +1,4 @@
-package DP_entity_linking;
+package DP_entity_linking.search;
 
 import org.apache.lucene.analysis.TokenFilter;
 import org.apache.lucene.analysis.TokenStream;

@@ -1,5 +1,6 @@
 package DP_entity_linking;
 
+import DP_entity_linking.search.MyAnalyzer;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
@@ -59,7 +60,7 @@ public class CountryAnalyzerTest {
     }
     @Test
     public void testCreateComponents() throws Exception {
-        Analyzer analyzer = new CountryAnalyzer();
+        Analyzer analyzer = new MyAnalyzer();
         Directory directory =  new MMapDirectory(new File("/workspace/erd/index_wikipedia"));
         IndexSearcher indexSearcher = new IndexSearcher(IndexReader.open(directory));
         //indexSearcher.setSimilarity(new LMJelinekMercerSimilarity((float) 0.1));

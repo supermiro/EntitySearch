@@ -1,5 +1,6 @@
 package DP_entity_linking;
 
+import DP_entity_linking.search.CountrySynonyms;
 import org.apache.lucene.analysis.synonym.SynonymMap;
 import org.junit.Test;
 

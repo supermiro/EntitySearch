@@ -1,4 +1,4 @@
-package DP_entity_linking;
+package DP_entity_linking.search;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
@@ -20,11 +20,11 @@ import java.io.Reader;
 /**
  * Created by miroslav.kudlac on 10/4/2015.
  */
-public class CountryAnalyzer extends Analyzer {
+public class MyAnalyzer extends Analyzer {
     private SynonymMap synonyms;
     private StopWords stopWords;
 
-    public CountryAnalyzer() throws IOException {
+    public MyAnalyzer() throws IOException {
         synonyms = CountrySynonyms.buildMap();
         stopWords = new StopWords(new File("src/main/resources/data/stop-words_long.txt"));
     }
@@ -37,7 +37,6 @@ public class CountryAnalyzer extends Analyzer {
 
     @Override
     protected TokenStreamComponents createComponents(String field, Reader reader) {
-
         CharArraySet stopSet = CharArraySet.copy(Version.LUCENE_43, stopWords.getStopWords());
 
         Tokenizer tokenizer = new StandardTokenizer(Version.LUCENE_43, reader);
@@ -47,7 +46,6 @@ public class CountryAnalyzer extends Analyzer {
         filter = new StopFilter(Version.LUCENE_43, filter, stopSet);
         filter = new SynonymFilter(filter, synonyms, true);
         filter = new EnglishMinimalStemFilter(filter);
-
         return new TokenStreamComponents(tokenizer, filter);
     }
 }

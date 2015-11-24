@@ -1,4 +1,4 @@
-package DP_entity_linking;
+package DP_entity_linking.dataset;
 
 import java.net.URI;
 
