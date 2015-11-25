@@ -6,6 +6,8 @@ import java.util.*;
 public class DBPediaOntologyExtractor {
 
 	private ArrayList<String> listOfRelations = new ArrayList<String>();
+	private Map<String, String> listOfCleanRelations = new HashMap<String, String>();
+	private ArrayList<String> lowerCaseListOfRelations = new ArrayList<String>();
 
 	public DBPediaOntologyExtractor(String filePath) throws FileNotFoundException, IOException, ClassNotFoundException {
 
@@ -35,6 +37,8 @@ public class DBPediaOntologyExtractor {
 			listOfRelations = (ArrayList<String>) ois.readObject();
 			ois.close();
 		}
+		cleanDBPediaTypes();
+		toLowerCaseTypes();
 	}
 
 	private String getRelation(String line) {
@@ -44,6 +48,36 @@ public class DBPediaOntologyExtractor {
 
 	public ArrayList<String> getDBPediaRelations() {
 		return this.listOfRelations;
+	}
+	
+	public ArrayList<String> getLowerDBPediaRelations(){
+		return this.lowerCaseListOfRelations;
+	}
+	
+	public String[] splitKey(String key) {
+		String[] r = key.split("(?=\\p{Upper})");
+		return r;
+	}
+	
+	private void cleanDBPediaTypes(){
+		for (String relation : listOfRelations){
+			if(!relation.equals(relation.toLowerCase())){
+				String[] r = splitKey(relation);
+				for (int i=0;i<r.length;i++){
+					listOfCleanRelations.put(relation+i,r[i]);
+				}
+			}
+		}
+	}
+	
+	private void toLowerCaseTypes(){
+		for (int i=0;i<listOfRelations.size();i++){
+			lowerCaseListOfRelations.add(listOfRelations.get(i).toLowerCase());
+		}
+	}
+	
+	public Map<String, String> getCleanDBPediaTypes(){
+		return this.listOfCleanRelations;
 	}
 
 	public void closeDBPediaOntologyExtractor() {
