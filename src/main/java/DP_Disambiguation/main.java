@@ -9,6 +9,7 @@ import java.util.Iterator;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
 
+import org.dmlc.xgboost4j.util.XGBoostError;
 import org.xml.sax.SAXException;
 
 import DP_Disambiguation_DumpHandler.Anchor;
@@ -28,6 +29,7 @@ import DP_Disambiguation_InputProcessing.*;
 import DP_Disambiguation_ResultAnalyser.ResultAnalyser;
 import DP_Disambiguation_trainigSetCreation.TestSetCreator;
 import DP_Disambiguation_vWHandler.VWHandler;
+import DP_Disambiguation_xgBoost.xgBoostWrapper;
 
 
 public class main {
@@ -79,10 +81,17 @@ public class main {
 		analyser.generatePositive(anchorLinkDictionary,"positiveExamples");
 		analyser.generateNegative(anchorLinkDictionary,"negativeExamples");
 		*/
-		ResultAnalyser ra = new ResultAnalyser ();
+		//ResultAnalyser ra = new ResultAnalyser ();
 		
 		//temporary hard written path
-		ra.evaluateResults(0.1,"C:\\Users\\User\\git\\EntitySearch\\src\\main\\resources\\data\\testSet.txt", "C:\\Users\\User\\git\\EntitySearch\\src\\main\\resources\\data\\predict.txt");
+		//ra.evaluateResults(0.1,"C:\\Users\\User\\git\\EntitySearch\\src\\main\\resources\\data\\testSet.txt", "C:\\Users\\User\\git\\EntitySearch\\src\\main\\resources\\data\\predict.txt");
+		
+		try {
+			xgBoostWrapper.predict("C:\\Users\\User\\git\\EntitySearch\\src\\main\\resources\\data\\trainSet.svm.txt", "C:\\Users\\User\\git\\EntitySearch\\src\\main\\resources\\data\\testSet.svm.txt");
+		} catch (XGBoostError e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		
 		/*
