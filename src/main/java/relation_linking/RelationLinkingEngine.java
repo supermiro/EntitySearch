@@ -17,6 +17,7 @@ public class RelationLinkingEngine {
 	private static DBPediaOntologyExtractor doe;
 	private static FBCategoriesExtractor fce;
 	private static int numberOfMatches;
+	private static Word2VecEngine wtv;
 
 	public static void main(String[] args) throws Exception {
 
@@ -24,7 +25,7 @@ public class RelationLinkingEngine {
 		doe = new DBPediaOntologyExtractor("/Users/fjuras/OneDriveBusiness/DPResources/dbpedia_2015-04.nt");
 		Records records = tjr.loadWebquestions();
 		fce = new FBCategoriesExtractor(tjr);
-		// Word2VecEngine wtv = new Word2VecEngine();
+		wtv = new Word2VecEngine(true);
 		LexicalParsingEngine lp = new LexicalParsingEngine();
 
 		output = new PrintWriter("/Users/fjuras/OneDriveBusiness/DPResources/Relations.txt", "UTF-8");
@@ -32,7 +33,6 @@ public class RelationLinkingEngine {
 		int numberOfRecords = 0;
 
 		for (Record record : records) {
-			// wtv.vectorizeSentence(record.getUtterance());
 			numberOfRecords++;
 			getRelations(record.getUtterance());
 			// lp.parseSentence(record.getUtterance());
@@ -114,10 +114,40 @@ public class RelationLinkingEngine {
 		return matched;
 	}
 
+	private static boolean isSentenceSimilarToWords(String sentence) {
+		boolean matched = false;
+
+		for (String relation : doe.getLowerDBPediaRelations()) {
+			if (wtv.isWordInModel(relation) && wtv.getSimilarity(sentence, relation) > 0.05) {
+					matched = true;
+					output.println("Word2VecSimilarityWith:" + relation);
+			}
+		}
+
+		return matched;
+	}
+	
+	private static boolean areWordsSimilar(String word){
+		boolean matched = false;
+		
+		for (String relation : doe.getLowerDBPediaRelations()){
+			if (wtv.isWordInModel(word) && wtv.isWordInModel(relation) && wtv.getWordsSimilarity(word, relation)>0.28){
+				matched = true;
+				output.println("Word2VecSimilarityWith:"+relation);
+			}
+		}
+		return matched;
+	}
+
 	private static boolean getRelations(String sentence) throws FileNotFoundException, UnsupportedEncodingException {
 
 		Reader reader = new StringReader(sentence);
 		boolean matched = false;
+
+//		if (isSentenceSimilarToWords(sentence)) {
+//			matched = true;
+//			output.println(sentence);
+//		}
 
 		for (Iterator<List<HasWord>> iterator = new DocumentPreprocessor(reader).iterator(); iterator.hasNext();) {
 			List<HasWord> word = iterator.next();
@@ -142,6 +172,10 @@ public class RelationLinkingEngine {
 					output.println(sentence);
 					matched = true;
 					matchedInSentence++;
+				} else if (areWordsSimilar(word.get(i).toString().toLowerCase())){
+					output.println(sentence);
+					matched = true;
+					matchedInSentence++;
 				}
 			}
 
@@ -154,6 +188,7 @@ public class RelationLinkingEngine {
 				numberOfMatches++;
 			}
 		}
+		
 		return matched;
 	}
 }
