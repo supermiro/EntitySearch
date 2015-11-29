@@ -8,7 +8,7 @@ public class ResultAnalyser
 {
 //otvorim predict.txt
 	
-	public void evaluateResults(Double threshold,String testSet, String predict) throws IOException
+	public static void evaluateResults(Double threshold,String testSet, String predict, String MLtool) throws IOException
 	{
 	String predictLine = null;
 	String testSetLine = null;
@@ -38,7 +38,8 @@ public class ResultAnalyser
 	    	Double predictValue = Double.parseDouble(predictLine);
 	    	Double realValue = Double.parseDouble(testSetLine);
 	    	
-	    	predictValue = 1/(double)(1+Math.exp(-1*predictValue));
+	    	if (MLtool.equals("vowpal"))
+	    		predictValue = 1/(double)(1+Math.exp(-1*predictValue));
 	    	
 	    	if (realValue == -1)
 	    		realValue = 0.0;

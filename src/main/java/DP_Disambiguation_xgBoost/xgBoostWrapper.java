@@ -3,9 +3,11 @@ package DP_Disambiguation_xgBoost;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.AbstractMap;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -53,7 +55,7 @@ import org.dmlc.xgboost4j.util.XGBoostError;
 			};
 			Iterable<Entry<String, Object>> params = paramMap.entrySet();
 		
-			/*
+			
 		//specifiy a watchList to see the performance
 		//any Iterable<Entry<String, DMatrix>> object could be used as watchList
 		List<Entry<String, DMatrix>> watchs =  new ArrayList<>();
@@ -66,16 +68,27 @@ import org.dmlc.xgboost4j.util.XGBoostError;
 		//-------------training---------
 		Booster booster = Trainer.train(params, trainMat, round, watchs, null, null);
 		//saving model
-		booster.saveModel("model.bin");
-		*/
+		booster.saveModel(".\\src\\main\\resources\\data\\model.bin");
+
 		
 		//loading model	
-		 Booster booster = new Booster(params, "model.bin");
-			
+		//Booster booster = new Booster(params, ".\\src\\main\\resources\\data\\model.bin");
+		 
 		//predict
 		float[][] predicts = booster.predict(testMat);
+		
+		PrintWriter writer = new PrintWriter(".\\src\\main\\resources\\data\\predict_xgBoost.txt", "UTF-8");
+		
+		for(int i = 0; i < predicts.length; i++)
+		{
+		    for(int j = 0; j < predicts[i].length; j++)
+		    {
+		    	writer.println(predicts[i][j]);
+		    }
+		}
+		writer.close();
+		
 		//predict leaf
-		int x = 0,y = 0;
 		
 	
 	}

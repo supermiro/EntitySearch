@@ -16,10 +16,11 @@ import DP_Disambiguation_DumpHandler.Anchor;
 import DP_Disambiguation_DumpHandler.Categories;
 import DP_Disambiguation_DumpHandler.DBpediaTypes;
 import DP_Disambiguation_DumpHandler.Dictionary;
-import DP_Disambiguation_DumpHandler.DumpFetcher;
+import DP_Disambiguation_DumpHandler.DumpHandler;
 import DP_Disambiguation_DumpHandler.ID;
 import DP_Disambiguation_DumpHandler.RedirectList;
 import DP_Disambiguation_DumpHandler.Tuple;
+import DP_Disambiguation_DumpHandler.WikipediaHandler;
 import DP_Disambiguation_FeatureBuilding.DBPediaFetcher;
 import DP_Disambiguation_FeatureBuilding.Entity;
 import DP_Disambiguation_FeatureBuilding.EntityAnalyser;
@@ -54,8 +55,8 @@ public class main {
 		candidateIDs.add("HMS_Duff");
 		candidateIDs.add("Duff_House");
 		*/
-		/*
-		PrintWriter writer = new PrintWriter("IDs.txt", "UTF-8");
+		
+		//PrintWriter writer = new PrintWriter("IDs.txt", "UTF-8");
 		
 		//String wikiPath = "simplewiki-latest-pages-articles.xml";
 		//String wikiPath = "enwiki-20150304-pages-articles.xml";
@@ -68,7 +69,7 @@ public class main {
 		DBPediaFetcher dbPediaFetcher = new DBPediaFetcher(dBpediaTypes.getdBpediaTypes());
 		
 		
-		DumpFetcher wikiFetcher = new DumpFetcher (args[0], anchorLinkDictionary,listOfRedirects,categories);
+		DumpHandler wikiFetcher = new WikipediaHandler (args[0], anchorLinkDictionary,listOfRedirects,categories);
 		
 		wikiFetcher.getEntityList() ;
 		wikiFetcher.getEntityInformation() ;
@@ -76,25 +77,29 @@ public class main {
 		PageRankCalculator pageRankCalculator = new PageRankCalculator();
 		pageRankCalculator.performCalculation(anchorLinkDictionary.getIDs().values(),60,0.85);
 		
-		dbPediaFetcher.updateEntities(anchorLinkDictionary, args[1]);
+		//dbPediaFetcher.updateEntities(anchorLinkDictionary, args[1]);
 		
-		analyser.generatePositive(anchorLinkDictionary,"positiveExamples");
-		analyser.generateNegative(anchorLinkDictionary,"negativeExamples");
-		*/
+		//analyser.generatePositive(anchorLinkDictionary,"positiveExamples");
+		//analyser.generateNegative(anchorLinkDictionary,"negativeExamples");
+		
 		//ResultAnalyser ra = new ResultAnalyser ();
 		
 		//temporary hard written path
 		//ra.evaluateResults(0.1,"C:\\Users\\User\\git\\EntitySearch\\src\\main\\resources\\data\\testSet.txt", "C:\\Users\\User\\git\\EntitySearch\\src\\main\\resources\\data\\predict.txt");
-		
+		/*
 		try {
 			xgBoostWrapper.predict("C:\\Users\\User\\git\\EntitySearch\\src\\main\\resources\\data\\trainSet.svm.txt", "C:\\Users\\User\\git\\EntitySearch\\src\\main\\resources\\data\\testSet.svm.txt");
 		} catch (XGBoostError e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		*/
+		
+		//temporary hard written path
+		//ResultAnalyser.evaluateResults(0.5,".\\src\\main\\resources\\data\\testSet.txt", ".\\src\\main\\resources\\data\\predict_xgBoost.txt","xgBoost");
+				
 		
 		
-		/*
 		double max = 0;
 		ID bestPageRankedPage = null;
 		for (Object o :  anchorLinkDictionary.getIDs().values())
@@ -106,15 +111,15 @@ public class main {
 			}
 				
 		}
-		*/
-		/*
+		
+		
 		
 		
 		EntityAnalyser entityAnalyser = new EntityAnalyser (anchorLinkDictionary);
 		String entityID = "atlanta";
-		entityAnalyser.analyse(entityID, "new_york");
+		entityAnalyser.analyse(bestPageRankedPage.getName(), "new_york");
 		
-		*/
+		
 		
 		/*
 		Anchor america = (Anchor) anchorLinkDictionary.getAnchors().get("europe");				

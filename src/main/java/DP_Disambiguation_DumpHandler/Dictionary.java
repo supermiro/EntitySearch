@@ -18,7 +18,7 @@ public HashMap getAnchors()
 	{
 		return anchors;
 	}
-public HashMap getIDs() 
+public HashMap<String, ID> getIDs() 
 	{
 		return iDs;
 	}
