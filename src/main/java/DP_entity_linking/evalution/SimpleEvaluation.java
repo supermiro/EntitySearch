@@ -1,4 +1,4 @@
-package DP_entity_linking;
+package DP_entity_linking.evalution;
 
 import org.apache.log4j.Logger;
 import org.apache.lucene.document.Document;
