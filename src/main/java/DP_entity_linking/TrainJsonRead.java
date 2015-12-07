@@ -31,10 +31,10 @@ import java.util.Map;
 
 public class TrainJsonRead {
     private static Logger LOGGER = Logger.getLogger(TrainJsonRead.class);
-    private static final File JSON_FILE = new File("C:\\workspace\\webquestions.json");
+    private static final File JSON_FILE = new File("/Users/fjuras/OneDriveBusiness/DPResources/webquestionsRelationDataset.json");
 
     private ObjectMapper mapper;
-    private Directory directory = new MMapDirectory(new File("/workspace/erd/index_wikipedia"));
+    private Directory directory = new MMapDirectory(new File("/Users/fjuras/OneDriveBusiness/DP/erd/index_wikipedia"));
     private Analyzer analyzer;
     private int numSearchRes = 20;
     private ArrayList<IndexSearcher> searchers = new ArrayList<IndexSearcher>();
@@ -49,6 +49,10 @@ public class TrainJsonRead {
         indexSearcher = new IndexSearcher(indexreader);
         int num = indexreader.numDocs();
         iEvaluation = new SimpleEvaluation(indexSearcher);
+    }
+    
+    public IndexReader getIndexReader(){
+    	return this.indexreader;
     }
 
     public static class Records extends ArrayList<Record> {
