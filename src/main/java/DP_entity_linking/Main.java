@@ -37,7 +37,6 @@ public class Main {
 
         // Defaultna konfiguracia
         conf = new DefaultConfiguration();
-
         Search search = new Search();
         search.start();
 
