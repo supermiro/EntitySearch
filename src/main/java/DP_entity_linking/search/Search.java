@@ -52,7 +52,7 @@ public class Search {
         statistics = new SearchStatistics();
     }
 
-    public void processRecord(Record r, Configuration conf) throws IOException, ParseException {
+    public String processRecord(Record r, Configuration conf) throws IOException, ParseException {
         TokenStream stream = analyzer.tokenStream(null, new StringReader(r.getUtterance()));
         //TokenStream stream = analyzer.tokenStream(null, new StringReader(r.getAnswer()));
         CharTermAttribute cattr = stream.addAttribute(CharTermAttribute.class);
@@ -65,7 +65,7 @@ public class Search {
         stream.end();
         stream.close();
         String newQuery = strBuilder.toString().trim();
-        this.retrieve(r, newQuery, conf);
+        return this.retrieve(r, newQuery, conf);
     }
 
     public int getScore() {
@@ -80,7 +80,11 @@ public class Search {
         String result = "";
         form = form.replaceAll("[^a-zA-Z0-9]+", " ").trim();
         String [] split = form.split(" ");
+        split = new HashSet<String>(Arrays.asList(split)).toArray(new String[0]);
         if (split.length <= 2) {
+            if (split.length > 1 && form.matches(".*\\bdisambiguation\\b.*")) {
+                form = form.replace("disambiguation", "");
+            }
             isMapped = query.toLowerCase().contains(form.toLowerCase().trim());
             backMapping.setIsMapped(isMapped);
             backMapping.setWords(form.trim());
@@ -90,7 +94,7 @@ public class Search {
                     continue;
                 }
                 s = s.replaceAll("[^a-zA-Z0-9]+"," ").trim();
-                contains = query.toLowerCase().contains(s.toLowerCase());
+                contains = query.toLowerCase().matches(".*\\b" + s.toLowerCase() + "\\b.*");
                 if (contains) {
                     string_count++;
                     result = result + " " + s;
@@ -142,10 +146,11 @@ public class Search {
         return queryL;
     }
 
-    private void retrieve(Record record, String query, Configuration conf) throws IOException, ParseException {
+    private String retrieve(Record record, String query, Configuration conf) throws IOException, ParseException {
         boolean backMapped_name = false;
         boolean backMapped = false;
         boolean backMapped_alias = false;
+        String finalId = null;
         BackMapping backMappingResult_alias = null;
         BackMapping backMappingResult_name = null;
         BackMapping backMappingResult = null;
@@ -206,6 +211,16 @@ public class Search {
             }
             LOGGER.info(doc.get("title"));
         }
+        if ( backMappedResults.size() > 0) {
+            ScoreDoc hit = backMappedResults.get(0);
+            Document finalDoc = indexSearcher.doc(hit.doc);
+            finalId = finalDoc.get("title");
+            finalId = finalId.replace(" ", "_");
+            LOGGER.info("FINAL RESULT IS: " + finalId);
+
+        } else {
+            LOGGER.info("CANNOT Be BACKMAPPED");
+        }
         //USE BACKMAPPING TO MAPPED VALUES
         if (!toBackMapping.isEmpty()) {
             statistics.countBackMapped++;
@@ -236,6 +251,7 @@ public class Search {
             LOGGER.info(question + ", " + answer);
 
         }
+        return finalId;
     }
 
 
