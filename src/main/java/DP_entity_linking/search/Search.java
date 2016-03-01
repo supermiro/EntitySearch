@@ -52,7 +52,10 @@ public class Search {
         statistics = new SearchStatistics();
     }
 
-    public String processRecord(Record r, Configuration conf) throws IOException, ParseException {
+    public List<String> processRecord(Record r, Configuration conf) throws IOException, ParseException {
+        if (conf == null){
+            conf = new DefaultConfiguration();
+        }
         TokenStream stream = analyzer.tokenStream(null, new StringReader(r.getUtterance()));
         //TokenStream stream = analyzer.tokenStream(null, new StringReader(r.getAnswer()));
         CharTermAttribute cattr = stream.addAttribute(CharTermAttribute.class);
@@ -73,7 +76,7 @@ public class Search {
         return statistics.getScore();
     }
 
-    private  BackMapping backMapped(String query, String form) {
+    public  BackMapping backMapped(String query, String form) {
         boolean isMapped = false;
         boolean contains;
         int string_count = 0;
@@ -146,11 +149,11 @@ public class Search {
         return queryL;
     }
 
-    private String retrieve(Record record, String query, Configuration conf) throws IOException, ParseException {
+    private List<String> retrieve(Record record, String query, Configuration conf) throws IOException, ParseException {
         boolean backMapped_name = false;
         boolean backMapped = false;
         boolean backMapped_alias = false;
-        String finalId = null;
+        List<String> finalId = new ArrayList<>();
         BackMapping backMappingResult_alias = null;
         BackMapping backMappingResult_name = null;
         BackMapping backMappingResult = null;
@@ -160,9 +163,6 @@ public class Search {
         TopDocs results = indexSearcher.search(queryL, conf.getNumSearchRes());
         ScoreDoc[] hits = results.scoreDocs;
         List<ScoreDoc> backMappedResults = new ArrayList<ScoreDoc>();
-
-        // return hits;
-        // TUTO to ODREZ
 
         String answer =  record.getAnswer();
         float score = iEvaluation.getScore(hits, answer);
@@ -209,13 +209,13 @@ public class Search {
                     }
                 }
             }
-            LOGGER.info(doc.get("title"));
+            LOGGER.info("title: " + doc.get("title") + " fb_name: " + fb_name + " fb_alias: " + fb_alias);
         }
         if ( backMappedResults.size() > 0) {
             ScoreDoc hit = backMappedResults.get(0);
             Document finalDoc = indexSearcher.doc(hit.doc);
-            finalId = finalDoc.get("title");
-            finalId = finalId.replace(" ", "_");
+            String resultId = finalDoc.get("title").replace(" ", "_");
+            finalId.add(resultId);
             LOGGER.info("FINAL RESULT IS: " + finalId);
 
         } else {
@@ -246,6 +246,10 @@ public class Search {
             answer = record.getAnswer();
             for (int j = 0; j < hitsBackMapped.length; j++) {
                 Document docBackMapped = indexSearcher.doc(hitsBackMapped[j].doc);
+                if (j == 0) {
+                    String resultBMId = docBackMapped.get("title").replace(" ", "_");
+                    finalId.add(resultBMId);
+                }
                 LOGGER.info("ANSWERS FOR BACKMAPPED QUESTIONS: " + docBackMapped.get("title") + " --- back mapped---");
             }
             LOGGER.info(question + ", " + answer);

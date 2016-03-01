@@ -42,7 +42,8 @@ public class Main {
 
         for (Record record : records) {
             LOGGER.info("------------" + record.getUtterance() + "--------------");
-            search.processRecord(record, conf);
+            List<String> a = search.processRecord(record, null);
+            LOGGER.info("+++++++++++++++++" + a + "++++++++++==");
         }
 
         int fitness = search.getScore();
