@@ -214,8 +214,8 @@ public class Search {
         if ( backMappedResults.size() > 0) {
             ScoreDoc hit = backMappedResults.get(0);
             Document finalDoc = indexSearcher.doc(hit.doc);
-            String resultId = finalDoc.get("title").replace(" ", "_");
-            finalId.add(resultId);
+            String resultId = finalDoc.get("title").trim().replaceAll("[^a-zA-Z0-9]+", " ").trim().replace(" ", "_");
+            finalId.add(resultId.trim());
             LOGGER.info("FINAL RESULT IS: " + finalId);
 
         } else {
@@ -239,21 +239,23 @@ public class Search {
                 }
             }
             LOGGER.info("BACKMAPPED QUERY: " + question);
-            Query queryBackMapped = this.buildLuceneQuery(question, conf);
-            TopDocs resultsBackMapped = indexSearcher.search(queryBackMapped, 5);
-            ScoreDoc[] hitsBackMapped = resultsBackMapped.scoreDocs;
+            if (question.length() > 0) {
+                Query queryBackMapped = this.buildLuceneQuery(question, conf);
+                TopDocs resultsBackMapped = indexSearcher.search(queryBackMapped, 5);
+                ScoreDoc[] hitsBackMapped = resultsBackMapped.scoreDocs;
 
-            answer = record.getAnswer();
-            for (int j = 0; j < hitsBackMapped.length; j++) {
-                Document docBackMapped = indexSearcher.doc(hitsBackMapped[j].doc);
-                if (j == 0) {
-                    String resultBMId = docBackMapped.get("title").replace(" ", "_");
-                    finalId.add(resultBMId);
+                answer = record.getAnswer();
+                for (int j = 0; j < hitsBackMapped.length; j++) {
+                    Document docBackMapped = indexSearcher.doc(hitsBackMapped[j].doc);
+                    if (j == 0) {
+                        String resultBMId = docBackMapped.get("title").trim().replace(" ", "_");
+                        finalId.add(resultBMId.trim());
+                    }
+                    LOGGER.info("ANSWERS FOR BACKMAPPED QUESTIONS: " + docBackMapped.get("title") + " --- back mapped---");
                 }
-                LOGGER.info("ANSWERS FOR BACKMAPPED QUESTIONS: " + docBackMapped.get("title") + " --- back mapped---");
-            }
-            LOGGER.info(question + ", " + answer);
+                LOGGER.info(question + ", " + answer);
 
+            }
         }
         return finalId;
     }

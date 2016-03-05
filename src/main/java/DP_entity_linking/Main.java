@@ -4,6 +4,7 @@ import DP_entity_linking.dataset.DataSet;
 import DP_entity_linking.dataset.Record;
 import DP_entity_linking.search.Configuration;
 import DP_entity_linking.search.DefaultConfiguration;
+import DP_entity_linking.search.FinalSearch;
 import DP_entity_linking.search.Search;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
@@ -27,7 +28,7 @@ public class Main {
         // Spracuj dataset
         DataSet dataset = new DataSet();
         List<Record> records = dataset.loadWebquestions();
-        records = records.subList(0, 200);
+        records = records.subList(0, 2000);
         Configuration conf;
 
         // Konfiguracia ziskana cez chromozon
@@ -39,7 +40,10 @@ public class Main {
         conf = new DefaultConfiguration();
         Search search = new Search();
         search.start();
+        FinalSearch finalSearch = new FinalSearch();
 
+        List<String> finalAnswer = finalSearch.processRecord("who killed lee harvey oswald shot?", null);
+        LOGGER.info("+++++++++++++++++" + finalAnswer + "++++++++++==");
         for (Record record : records) {
             LOGGER.info("------------" + record.getUtterance() + "--------------");
             List<String> a = search.processRecord(record, null);
