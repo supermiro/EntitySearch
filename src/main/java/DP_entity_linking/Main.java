@@ -37,13 +37,13 @@ public class Main {
 
         // Defaultna konfiguracia
         conf = new DefaultConfiguration();
-
         Search search = new Search();
         search.start();
 
         for (Record record : records) {
             LOGGER.info("------------" + record.getUtterance() + "--------------");
-            search.processRecord(record, conf);
+            List<String> a = search.processRecord(record, null);
+            LOGGER.info("+++++++++++++++++" + a + "++++++++++==");
         }
 
         int fitness = search.getScore();
