@@ -6,8 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import DP_entity_linking.*;
-import DP_entity_linking.TrainJsonRead.Records;
+import DP_entity_linking.dataset.*;
 import edu.stanford.nlp.ling.HasWord;
 import edu.stanford.nlp.process.DocumentPreprocessor;
 
@@ -18,15 +17,17 @@ public class RelationLinkingEngine {
 	private static FBCategoriesExtractor fce;
 	private static int numberOfMatches;
 	private static Word2VecEngine wtv;
+	private static Word2VecEngine glove;
 
 	public static void main(String[] args) throws Exception {
 
-		TrainJsonRead tjr = new TrainJsonRead();
+		DataSet dataset = new DataSet("/Users/fjuras/OneDriveBusiness/DPResources/webquestionsRelationDataset.json");
+        List<Record> records = dataset.loadWebquestions();
 		doe = new DBPediaOntologyExtractor("/Users/fjuras/OneDriveBusiness/DPResources/dbpedia_2015-04.nt");
-		Records records = tjr.loadWebquestions();
-		fce = new FBCategoriesExtractor(tjr);
-		wtv = new Word2VecEngine(true);
-		LexicalParsingEngine lp = new LexicalParsingEngine();
+		fce = new FBCategoriesExtractor();
+		glove = new Word2VecEngine(true);
+		//wtv = new Word2VecEngine(false);
+		//LexicalParsingEngine lp = new LexicalParsingEngine();
 
 		output = new PrintWriter("/Users/fjuras/OneDriveBusiness/DPResources/Relations.txt", "UTF-8");
 		numberOfMatches = 0;
@@ -114,11 +115,11 @@ public class RelationLinkingEngine {
 		return matched;
 	}
 
-	private static boolean isSentenceSimilarToWords(String sentence) {
+	private static boolean isSentenceSimilarToWords(String sentence, Word2VecEngine w2v) {
 		boolean matched = false;
 
 		for (String relation : doe.getLowerDBPediaRelations()) {
-			if (wtv.isWordInModel(relation) && wtv.getSimilarity(sentence, relation) > 0.05) {
+			if (w2v.isWordInModel(relation) && w2v.canBeSentenceVectorized(sentence) && w2v.getSimilarity(sentence, relation) > 0.05) {
 					matched = true;
 					output.println("Word2VecSimilarityWith:" + relation);
 			}
@@ -131,7 +132,7 @@ public class RelationLinkingEngine {
 		boolean matched = false;
 		
 		for (String relation : doe.getLowerDBPediaRelations()){
-			if (wtv.isWordInModel(word) && wtv.isWordInModel(relation) && wtv.getWordsSimilarity(word, relation)>0.28){
+			if (glove.isWordInModel(word) && glove.isWordInModel(relation) && glove.getWordsSimilarity(word, relation)>0.28){
 				matched = true;
 				output.println("Word2VecSimilarityWith:"+relation);
 			}
@@ -144,11 +145,11 @@ public class RelationLinkingEngine {
 		Reader reader = new StringReader(sentence);
 		boolean matched = false;
 
-//		if (isSentenceSimilarToWords(sentence)) {
+//		if (isSentenceSimilarToWords(sentence, glove)) {
 //			matched = true;
 //			output.println(sentence);
 //		}
-
+//
 		for (Iterator<List<HasWord>> iterator = new DocumentPreprocessor(reader).iterator(); iterator.hasNext();) {
 			List<HasWord> word = iterator.next();
 			matched = false;

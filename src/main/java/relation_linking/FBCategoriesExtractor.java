@@ -11,20 +11,21 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.lucene.index.*;
+import org.apache.lucene.store.Directory;
+import org.apache.lucene.store.MMapDirectory;
 import org.apache.lucene.util.BytesRef;
-
-import DP_entity_linking.TrainJsonRead;
 
 public class FBCategoriesExtractor {
 
 	ArrayList<String> fbCategories = new ArrayList<String>();
 	private Map<String, String> listOfCleanCategories = new HashMap<String, String>();
 
-	public FBCategoriesExtractor(TrainJsonRead tjr) throws IOException, ClassNotFoundException {
+	public FBCategoriesExtractor() throws IOException, ClassNotFoundException {
 
 		File fbStore = new File("FBStore");
 		if (!fbStore.exists() || fbStore.isDirectory()) {
-			IndexReader indexReader = tjr.getIndexReader();
+	        Directory directory = new MMapDirectory(new File("/workspace/erd/index_wikipedia"));
+			IndexReader  indexReader = IndexReader.open(directory);
 			Fields fields = MultiFields.getFields(indexReader);
 			Terms terms = fields.terms("fb_category");
 			TermsEnum iterator = terms.iterator(null);

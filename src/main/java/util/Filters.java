@@ -36,8 +36,8 @@ public class Filters {
   public WordFilter removeStopwords = new RemoveWords() {
     {
       try (InputStream in = this.getClass().getResourceAsStream("/nltk_en_stopwords.txt")) {
-//        String text = IOUtils.toString(in, "UTF-8");
-//        remove.addAll(Arrays.asList(StringUtils.split(text, ' ')));
+        String text = IOUtils.toString(in, "UTF-8");
+        remove.addAll(Arrays.asList(StringUtils.split(text, ' ')));
       } catch (IOException e) {
         e.printStackTrace();
       }
@@ -47,8 +47,8 @@ public class Filters {
   public WordFilter removeShortWords = new RemoveWords() {
 	    {
 	      try (InputStream in = this.getClass().getResourceAsStream("/nltk_en_stopwords.txt")) {
-//	        String text = IOUtils.toString(in, "UTF-8");
-//	        remove.addAll(Arrays.asList(StringUtils.split(text, ' ')));
+	        String text = IOUtils.toString(in, "UTF-8");
+	        remove.addAll(Arrays.asList(StringUtils.split(text, ' ')));
 	      } catch (IOException e) {
 	        e.printStackTrace();
 	      }
