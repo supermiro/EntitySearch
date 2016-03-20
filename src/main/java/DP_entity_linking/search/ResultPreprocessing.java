@@ -125,12 +125,12 @@ public class ResultPreprocessing {
                 delete = true;
             } else {
                 if (canonicArray.length <= 2){
-                    if (item.toLowerCase().contains(canonicArray[0])){
+                    if ((item.toLowerCase()).contains(canonicArray[0].toLowerCase())){
                         delete = true;
                     }
                 } else {
                     for (String s : canonicArray) {
-                        if (item.toLowerCase().contains(s.toLowerCase())){
+                        if ((item.toLowerCase()).contains(s.toLowerCase())){
                             containCount++;
                         }
                     }
@@ -141,6 +141,7 @@ public class ResultPreprocessing {
             }
             if (delete) {
                 newList.remove(i);
+                i--;
             }
         }
     }
