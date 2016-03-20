@@ -76,42 +76,6 @@ public class Search {
         return statistics.getScore();
     }
 
-    public  BackMapping backMapped(String query, String form) {
-        boolean isMapped = false;
-        boolean contains;
-        int string_count = 0;
-        String result = "";
-        form = form.replaceAll("[^a-zA-Z0-9]+", " ").trim();
-        String [] split = form.split(" ");
-        split = new HashSet<String>(Arrays.asList(split)).toArray(new String[0]);
-        if (split.length <= 2) {
-            if (split.length > 1 && form.matches(".*\\bdisambiguation\\b.*")) {
-                form = form.replace("disambiguation", "");
-            }
-            isMapped = query.toLowerCase().contains(form.toLowerCase().trim());
-            backMapping.setIsMapped(isMapped);
-            backMapping.setWords(form.trim());
-        } else {
-            for (String s : split){
-                if (s.length() < 3  && !Character.isUpperCase(s.charAt(0))){
-                    continue;
-                }
-                s = s.replaceAll("[^a-zA-Z0-9]+"," ").trim();
-                contains = query.toLowerCase().matches(".*\\b" + s.toLowerCase() + "\\b.*");
-                if (contains) {
-                    string_count++;
-                    result = result + " " + s;
-                }
-            }
-            if (string_count >= 2){
-                isMapped = true;
-                backMapping.setIsMapped(isMapped);
-                backMapping.setWords(result.trim());
-            }
-        }
-        return backMapping;
-    }
-
     private String[] prepareFields( Map<String, Float> map) {
         int size = map.size();
         String[] fields = new String[size];
@@ -163,7 +127,7 @@ public class Search {
         TopDocs results = indexSearcher.search(queryL, conf.getNumSearchRes());
         ScoreDoc[] hits = results.scoreDocs;
         List<ScoreDoc> backMappedResults = new ArrayList<ScoreDoc>();
-
+        BackMapping1 backMapping1 = new BackMapping1();
         String answer =  record.getAnswer();
         float score = iEvaluation.getScore(hits, answer);
         statistics.statisticScore.count(score);
@@ -184,11 +148,11 @@ public class Search {
             backMapped_name = false;
             backMapped_alias = false;
             if (fb_name != null) {
-                backMappingResult_name = this.backMapped(record.getQuestion(), fb_name);
+                backMappingResult_name = backMapping1.backMapped(record.getQuestion(), fb_name);
                 backMapped_name =  backMappingResult_name.isMapped();
             }
             if (fb_alias != null) {
-                backMappingResult_alias = this.backMapped(record.getQuestion(), fb_name);
+                backMappingResult_alias = backMapping1.backMapped(record.getQuestion(), fb_name);
                 backMapped_name =  backMappingResult_alias.isMapped();
             }
             if (backMapped_name) {
@@ -199,7 +163,7 @@ public class Search {
                 backMappedResults.add(hits[i]);
             } else {
                 for (IndexableField altName : altNames) {
-                    backMappingResult = this.backMapped(record.getQuestion(), altName.stringValue());
+                    backMappingResult = backMapping1.backMapped(record.getQuestion(), altName.stringValue());
                     backMapped = backMappingResult.isMapped();
                     if (backMapped) {
                         String haystack = backMappingResult.getWords().toLowerCase();
@@ -212,10 +176,12 @@ public class Search {
             LOGGER.info("title: " + doc.get("title") + " fb_name: " + fb_name + " fb_alias: " + fb_alias);
         }
         if ( backMappedResults.size() > 0) {
-            ScoreDoc hit = backMappedResults.get(0);
-            Document finalDoc = indexSearcher.doc(hit.doc);
-            String resultId = finalDoc.get("title").trim().replaceAll("[^a-zA-Z0-9]+", " ").trim().replace(" ", "_");
-            finalId.add(resultId.trim());
+            for (int i = 0; i < backMappedResults.size(); i++){
+                ScoreDoc hit = backMappedResults.get(i);
+                Document finalDoc = indexSearcher.doc(hit.doc);
+                String resultId = finalDoc.get("title").trim().replaceAll("[^a-zA-Z0-9]+", " ").trim().replace(" ", "_");
+                finalId.add(resultId.trim());
+            }
             LOGGER.info("FINAL RESULT IS: " + finalId);
 
         } else {

@@ -2,10 +2,7 @@ package DP_entity_linking;
 
 import DP_entity_linking.dataset.DataSet;
 import DP_entity_linking.dataset.Record;
-import DP_entity_linking.search.Configuration;
-import DP_entity_linking.search.DefaultConfiguration;
-import DP_entity_linking.search.FinalSearch;
-import DP_entity_linking.search.Search;
+import DP_entity_linking.search.*;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.apache.lucene.queryparser.classic.ParseException;
@@ -28,8 +25,9 @@ public class Main {
         // Spracuj dataset
         DataSet dataset = new DataSet();
         List<Record> records = dataset.loadWebquestions();
-        records = records.subList(0, 2000);
+        records = records.subList(0, 200);
         Configuration conf;
+        ResultPreprocessing result = new ResultPreprocessing();
 
         // Konfiguracia ziskana cez chromozon
         //Chromozon chromozon = new Chromozon();
@@ -47,7 +45,13 @@ public class Main {
         for (Record record : records) {
             LOGGER.info("------------" + record.getUtterance() + "--------------");
             List<String> a = search.processRecord(record, null);
-            LOGGER.info("+++++++++++++++++" + a + "++++++++++==");
+            if (a.size() > 0) {
+                List<List<String>> finalResultPreprocessed = result.results(record.getQuestion(), a);
+                LOGGER.info("+++++++++++++++++" + finalResultPreprocessed + "++++++++++==");
+            } else {
+                LOGGER.info("NOT FOUND!");
+            }
+
         }
 
         int fitness = search.getScore();

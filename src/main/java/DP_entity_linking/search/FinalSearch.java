@@ -182,6 +182,7 @@ public class FinalSearch {
                 ScoreDoc hit = backMappedResults.get(0);
                 Document finalDoc = indexSearcher.doc(hit.doc);
                 String resultId = finalDoc.get("title").replace(" ", "_");
+
                 finalId.add(resultId);
                 LOGGER.info("FINAL RESULT IS: " + finalId);
 
@@ -197,12 +198,15 @@ public class FinalSearch {
                         return t1.length() - s.length();
                     }
                 });
+                question = question.toLowerCase();
                 for (String backMap : toBackMapping) {
                     String[] backArray = backMap.split(" ");
                     for (String b : backArray) {
+
                         question = question.replaceAll(b, "").replace("?", "").trim();
                     }
                 }
+                LOGGER.info("NEW QUESTION: " + question);
                 if (question.length() > 0) {
                     Query queryBackMapped = this.buildLuceneQuery(question, conf);
                     TopDocs resultsBackMapped = indexSearcher.search(queryBackMapped, 5);
