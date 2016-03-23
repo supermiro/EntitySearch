@@ -108,7 +108,6 @@ public class ResultPreprocessing {
      * @param canonic
      */
     private void deleteCorrespondedEntities(String canonic){
-        int containCount = 0;
         String[] canonicArray =  canonic.split("_");
         //List<String> list = this.getNewList();
         Collections.sort(Arrays.asList(canonicArray), new Comparator<String>() {
@@ -119,6 +118,7 @@ public class ResultPreprocessing {
         });
         //delete entities which contains same words as canonic entity
         for (int i = 0; i < newList.size(); i++) {
+            int containCount = 0;
             boolean delete = false;
             String item = newList.get(i);
             if (item.toLowerCase().contains(canonic.toLowerCase())){
