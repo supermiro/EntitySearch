@@ -21,13 +21,15 @@ public class BackMapping1 implements BackMappingInterface{
         form = form.replaceAll("[^a-zA-Z0-9]+", " ").trim();
         String [] split = form.split(" ");
         split = new HashSet<String>(Arrays.asList(split)).toArray(new String[0]);
+        if (split.length > 1 && form.matches(".*\\bdisambiguation\\b.*")) {
+            form = form.replace("disambiguation", "");
+        }
         if (split.length <= 2) {
-            if (split.length > 1 && form.matches(".*\\bdisambiguation\\b.*")) {
-                form = form.replace("disambiguation", "");
-            }
             isMapped = query.toLowerCase().contains(form.toLowerCase().trim());
             backMapping.setIsMapped(isMapped);
-            backMapping.setWords(form.trim());
+            if (isMapped) {
+                backMapping.setWords(form.trim());
+            }
         } else {
             for (String s : split){
                 if (s.length() < 3  && !Character.isUpperCase(s.charAt(0))){
@@ -43,7 +45,7 @@ public class BackMapping1 implements BackMappingInterface{
             if (string_count >= 2){
                 isMapped = true;
                 backMapping.setIsMapped(isMapped);
-                backMapping.setWords(result.trim());
+                backMapping.setWords(form);
             }
         }
         return backMapping;

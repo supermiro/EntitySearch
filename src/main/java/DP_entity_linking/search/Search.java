@@ -128,6 +128,7 @@ public class Search {
         ScoreDoc[] hits = results.scoreDocs;
         List<ScoreDoc> backMappedResults = new ArrayList<ScoreDoc>();
         BackMapping1 backMapping1 = new BackMapping1();
+        BackMapping2 backMapping2 = new BackMapping2();
         String answer =  record.getAnswer();
         float score = iEvaluation.getScore(hits, answer);
         statistics.statisticScore.count(score);
