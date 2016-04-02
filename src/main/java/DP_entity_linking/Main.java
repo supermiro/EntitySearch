@@ -25,14 +25,14 @@ public class Main {
         // Spracuj dataset
         DataSet dataset = new DataSet();
         List<Record> records = dataset.loadWebquestions();
-        records = records.subList(0, 200);
+        records = records.subList(0, 3700);
         Configuration conf;
         ResultPreprocessing result = new ResultPreprocessing();
 
-        // Konfiguracia ziskana cez chromozon
-        //Chromozon chromozon = new Chromozon();
-        //chromozon.create(randnum);
-       // conf = chromozon.get();
+        // Configuration via chromozom
+        //Chromosome chromosome = new Chromosome();
+        //chromosome.create(randnum);
+       // conf = chromosome.get();
 
         // Defaultna konfiguracia
         conf = new DefaultConfiguration();
@@ -69,7 +69,6 @@ public class Main {
         PropertyConfigurator.configure("log4j.properties");
         Random randnum = new Random();
         randnum.setSeed(123456789);
-        // Spellcheck spell = new Spellcheck(new WordFrequenciesT("EntityStore"), "C:\\workspace\\erd\\EntityStore\\spellindex\\1\\spellindex");
 
         try {
             Main app = new Main();

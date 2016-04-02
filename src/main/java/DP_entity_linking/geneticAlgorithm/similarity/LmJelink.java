@@ -1,7 +1,7 @@
 package DP_entity_linking.geneticAlgorithm.similarity;
 
+import DP_entity_linking.geneticAlgorithm.GenSequence;
 import DP_entity_linking.geneticAlgorithm.Interval;
-import DP_entity_linking.geneticAlgorithm.SekvenciaGenov;
 import org.apache.lucene.search.similarities.LMJelinekMercerSimilarity;
 import org.apache.lucene.search.similarities.Similarity;
 
@@ -10,7 +10,7 @@ import java.util.Random;
 /**
  * Created by miroslav.kudlac on 11/22/2015.
  */
-public class LmJelink implements SekvenciaGenov<Similarity> {
+public class LmJelink implements GenSequence<Similarity> {
     private Interval value;
 
     public LmJelink() {

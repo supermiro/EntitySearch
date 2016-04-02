@@ -11,12 +11,12 @@ import java.util.Random;
 /**
  * Created by miroslav.kudlac on 11/9/2015.
  */
-public final class Chromozon implements SekvenciaGenov<Configuration>, Serializable {
+public final class Chromosome implements GenSequence<Configuration>, Serializable {
 
-    private SekvenciaGenov<Map<String, Float>> fields;
-    private SekvenciaGenov<Similarity> similarity;
+    private GenSequence<Map<String, Float>> fields;
+    private GenSequence<Similarity> similarity;
 
-    public Chromozon() {
+    public Chromosome() {
         fields = new BoostParameters();
         similarity = new LmJelink();
     }
@@ -47,17 +47,17 @@ public final class Chromozon implements SekvenciaGenov<Configuration>, Serializa
     }
 
 
-    public SekvenciaGenov<Map<String, Float>> getFields() {
+    public GenSequence<Map<String, Float>> getFields() {
         return fields;
     }
 
-    public SekvenciaGenov<Similarity> getSimilarity() {
+    public GenSequence<Similarity> getSimilarity() {
         return similarity;
     }
 
     @Override
     public String toString() {
-        return "Chromozon{" +
+        return "Chromosome{" +
                 "fields=" + fields +
                 ", similarity=" + similarity +
                 '}';

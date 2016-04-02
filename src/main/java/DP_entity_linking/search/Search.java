@@ -56,8 +56,8 @@ public class Search {
         if (conf == null){
             conf = new DefaultConfiguration();
         }
-        TokenStream stream = analyzer.tokenStream(null, new StringReader(r.getUtterance()));
-        //TokenStream stream = analyzer.tokenStream(null, new StringReader(r.getAnswer()));
+        //TokenStream stream = analyzer.tokenStream(null, new StringReader(r.getUtterance()));
+        TokenStream stream = analyzer.tokenStream(null, new StringReader(r.getAnswer()));
         CharTermAttribute cattr = stream.addAttribute(CharTermAttribute.class);
 
         stream.reset();
@@ -127,8 +127,8 @@ public class Search {
         TopDocs results = indexSearcher.search(queryL, conf.getNumSearchRes());
         ScoreDoc[] hits = results.scoreDocs;
         List<ScoreDoc> backMappedResults = new ArrayList<ScoreDoc>();
-        BackMapping1 backMapping1 = new BackMapping1();
-        BackMapping2 backMapping2 = new BackMapping2();
+        BackMappingInterface backMapping2 = new BackMapping2();
+        BackMappingInterface backMapping1 = new BackMapping1();
         String answer =  record.getAnswer();
         float score = iEvaluation.getScore(hits, answer);
         statistics.statisticScore.count(score);

@@ -6,7 +6,7 @@ import java.util.Random;
 /**
  * Created by miroslav.kudlac on 11/22/2015.
  */
-public class Interval implements SekvenciaGenov<Float>, Serializable {
+public class Interval implements GenSequence<Float>, Serializable {
     float min; // 0.0001f;
     float max; // 0.000001f;
     int pocetUsekov; // na kolko usekov to rozdelime?
