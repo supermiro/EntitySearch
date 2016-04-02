@@ -28,9 +28,9 @@ public class BoostParameters implements GenSequence<Map<String, Float>>, Seriali
 
         for (Map.Entry<String, Interval> entry : konfiguracia.entrySet()) {
             if(rnd == null) {
-                entry.getValue().setUsek(100); // nastavime vsetkym max hodnotu
+                entry.getValue().setUsek(100); // set max value
             } else {
-                entry.getValue().create(rnd); // nastavujeme hodnoty nahodne
+                entry.getValue().create(rnd); // set random value
             }
         }
     }
