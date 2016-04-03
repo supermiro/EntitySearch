@@ -40,8 +40,8 @@ public class Main {
         search.start();
         FinalSearch finalSearch = new FinalSearch();
 
-        List<String> finalAnswer = finalSearch.processRecord("what language do people from thailand speak?", null);
-        List<List<String>> f = result.results("what language do people from thailand speak?", finalAnswer);
+        List<String> finalAnswer = finalSearch.processRecord("which kardashians are having babies", null);
+        List<List<String>> f = result.results("which kardashians are having babies", finalAnswer);
         LOGGER.info("+++++++++++++++++" + f + "++++++++++==");
         for (Record record : records) {
             LOGGER.info("------------" + record.getUtterance() + "--------------");

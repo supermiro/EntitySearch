@@ -143,7 +143,13 @@ public class Search {
     // USE FOR BACKMAPPING
         for (int i = 0; i < hits.length; i++) {
             Document doc = indexSearcher.doc(hits[i].doc);
-            IndexableField[] altNames = doc.getFields("alt");
+            IndexableField[] alts = doc.getFields("alt");
+            String entittyTitle = doc.get("title");
+            List<String> altNames = new ArrayList<String>();
+            for (IndexableField indexableField : alts) {
+                altNames.add(indexableField.toString());
+            }
+            altNames.add(entittyTitle);
             String fb_name = doc.get("fb_name");
             String fb_alias = doc.get("fb_alias");
             backMapped_name = false;
@@ -163,8 +169,8 @@ public class Search {
                 toBackMapping.add(backMappingResult_alias.getWords().toLowerCase());
                 backMappedResults.add(hits[i]);
             } else {
-                for (IndexableField altName : altNames) {
-                    backMappingResult = backMapping1.backMapped(record.getQuestion(), altName.stringValue());
+                for (String altName : altNames) {
+                    backMappingResult = backMapping1.backMapped(record.getQuestion(), altName);
                     backMapped = backMappingResult.isMapped();
                     if (backMapped) {
                         String haystack = backMappingResult.getWords().toLowerCase();
@@ -214,10 +220,8 @@ public class Search {
                 answer = record.getAnswer();
                 for (int j = 0; j < hitsBackMapped.length; j++) {
                     Document docBackMapped = indexSearcher.doc(hitsBackMapped[j].doc);
-                    if (j == 0) {
-                        String resultBMId = docBackMapped.get("title").trim().replace(" ", "_");
-                        finalId.add(resultBMId.trim());
-                    }
+                    String resultBMId = docBackMapped.get("title").trim().replace(" ", "_");
+                    finalId.add(resultBMId.trim());
                     LOGGER.info("ANSWERS FOR BACKMAPPED QUESTIONS: " + docBackMapped.get("title") + " --- back mapped---");
                 }
                 LOGGER.info(question + ", " + answer);

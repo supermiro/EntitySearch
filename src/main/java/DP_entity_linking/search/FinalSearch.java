@@ -136,7 +136,13 @@ public class FinalSearch {
         // USE FOR BACKMAPPING
         for (int i = 0; i < hits.length; i++) {
             Document doc = indexSearcher.doc(hits[i].doc);
-            IndexableField[] altNames = doc.getFields("alt");
+            IndexableField[] alts = doc.getFields("alt");
+            String entittyTitle = doc.get("title");
+            List<String> altNames = new ArrayList<String>();
+            for (IndexableField indexableField : alts) {
+                altNames.add(indexableField.toString());
+            }
+            altNames.add(entittyTitle);
             String fb_name = doc.get("fb_name");
             String fb_alias = doc.get("fb_alias");
             backMapped_name = false;
@@ -156,8 +162,8 @@ public class FinalSearch {
                 toBackMapping.add(backMappingResult_alias.getWords().toLowerCase());
                 backMappedResults.add(hits[i]);
             } else {
-                for (IndexableField altName : altNames) {
-                    backMappingResult = backMapping1.backMapped(record, altName.stringValue());
+                for (String altName : altNames) {
+                    backMappingResult = backMapping1.backMapped(record, altName);
                     backMapped = backMappingResult.isMapped();
                     if (backMapped) {
                         String haystack = backMappingResult.getWords().toLowerCase();

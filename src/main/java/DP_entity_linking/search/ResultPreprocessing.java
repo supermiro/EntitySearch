@@ -125,17 +125,30 @@ public class ResultPreprocessing {
                 delete = true;
             } else {
                 if (canonicArray.length <= 2){
-                    if ((item.toLowerCase()).contains(canonicArray[0].toLowerCase())){
+                    if ((item.toLowerCase()).contains(canonicArray[0].toLowerCase()) && !Character.isUpperCase(canonicArray[0].charAt(0))){
                         delete = true;
                     }
                 } else {
-                    for (String s : canonicArray) {
-                        if ((item.toLowerCase()).contains(s.toLowerCase())){
-                            containCount++;
+                    String[] itemArray =  canonic.split("_");
+                    int countItemUpperCase = 0;
+                    for (String it : itemArray) {
+                        if (Character.isUpperCase(it.charAt(0))){
+                            countItemUpperCase++;
                         }
                     }
-                    if (containCount >= 2){
-                        delete = true;
+                    if (countItemUpperCase == itemArray.length){
+                        delete = false;
+                    }
+                    else {
+                        for (String s : canonicArray) {
+                            if ((item.toLowerCase()).contains(s.toLowerCase())) {
+                                containCount++;
+                            }
+                        }
+
+                        if (containCount >= 2) {
+                            delete = true;
+                        }
                     }
                 }
             }
