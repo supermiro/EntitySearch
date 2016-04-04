@@ -24,12 +24,12 @@ public class SearchStatistics {
         for (Map.Entry entry : statisticScore.entrySet()) {
             LOGGER.info(entry.getKey() + "," + entry.getValue());
         }
-        for (Map.Entry entry : statisticDbCategory.entrySet()) {
+       /* for (Map.Entry entry : statisticDbCategory.entrySet()) {
             LOGGER.info(entry.getKey() + "," + entry.getValue());
         }
         for (Map.Entry entry : statisticFbCategory.entrySet()) {
             LOGGER.info("fb_" + entry.getKey() + "," + entry.getValue());
-        }
+        }*/
         LOGGER.info("backmapped: " + countBackMapped);
     }
 

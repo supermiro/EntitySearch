@@ -19,11 +19,13 @@ public class DefaultConfiguration extends Configuration {
 
         };
         Map<String, Float> boost = new HashMap<>();
-        boost.put("title", 0.4f);
-        boost.put("anchor", 0.0f);
-        boost.put("alt", 0.0f);
-        boost.put("fb_name", 0.0f);
+        boost.put("title", 0.25f);
+        boost.put("anchor",  0.25f);
+        boost.put("alt",  0.25f);
+        boost.put("text", 0.25f);
         boost.put("abs", 0.0f);
+        boost.put("fb_name", 0.0f);
+        boost.put("sentence",  0.0f);
 
         setSims(sims);
         setBoost(boost);

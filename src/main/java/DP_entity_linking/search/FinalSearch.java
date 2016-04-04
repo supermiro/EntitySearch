@@ -186,6 +186,12 @@ public class FinalSearch {
 
         } else {
             LOGGER.info("CANNOT Be BACKMAPPED");
+            for (int i = 0; i < hits.length; i++) {
+                Document doc = indexSearcher.doc(hits[i].doc);
+
+                finalId.add( doc.get("title").trim().replaceAll("[^a-zA-Z0-9]+", " ").trim().replace(" ", "_"));
+                return finalId;
+            }
         }
         //USE BACKMAPPING TO MAPPED VALUES
         if (!toBackMapping.isEmpty()) {

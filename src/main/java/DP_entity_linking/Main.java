@@ -40,8 +40,8 @@ public class Main {
         search.start();
         FinalSearch finalSearch = new FinalSearch();
 
-        List<String> finalAnswer = finalSearch.processRecord("which kardashians are having babies", null);
-        List<List<String>> f = result.results("which kardashians are having babies", finalAnswer);
+        List<String> finalAnswer = finalSearch.processRecord("what did darry look like", null);
+        List<List<String>> f = result.results("what did darry look like", finalAnswer);
         LOGGER.info("+++++++++++++++++" + f + "++++++++++==");
         for (Record record : records) {
             LOGGER.info("------------" + record.getUtterance() + "--------------");
