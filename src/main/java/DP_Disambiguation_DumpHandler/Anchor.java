@@ -1,9 +1,9 @@
 package DP_Disambiguation_DumpHandler;
-import java.util.ArrayList;
+import java.util.HashSet;
 
 
 public class Anchor {
-private ArrayList<ID> referencedIDs;
+private HashSet<ID> referencedIDs = null;
 private String name;
 
 public String getName() {
@@ -12,15 +12,17 @@ public String getName() {
 
 public Anchor(String newName) {
 	super();
-	this.referencedIDs = new ArrayList<ID>();
 	this.name = newName;
 }
 
-public ArrayList<ID> getAllReferencedIDs() {
+public HashSet<ID> getAllReferencedIDs() {
 	return referencedIDs;
 }
 
 public void addReferencedID(ID newID) {
+	if (this.referencedIDs == null)
+		this.referencedIDs = new HashSet<ID>();
+	
 	this.referencedIDs.add(newID);
 }
 }

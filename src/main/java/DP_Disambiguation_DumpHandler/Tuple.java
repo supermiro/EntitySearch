@@ -1,8 +1,8 @@
 package DP_Disambiguation_DumpHandler;
 
 public class Tuple<First, Second> { 
-	  private final First first; 
-	
+	  private First first;  
+	  
 	public First getFirst() {
 		return first;
 	}
@@ -11,7 +11,15 @@ public class Tuple<First, Second> {
 		return second;
 	}
 
-	private final Second second; 
+	public void setFirst(First first) {
+		this.first=first;
+	}
+
+	public void setSecond(Second second) {
+		this.second = second;
+	}
+	
+	private Second second; 
 	  
 	  public Tuple(First first, Second second) { 
 	    this.first = first; 

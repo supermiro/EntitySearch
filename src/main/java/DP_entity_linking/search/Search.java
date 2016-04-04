@@ -28,8 +28,7 @@ import org.apache.lucene.util.Version;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.Map;
+import java.util.*;
 
 public class Search {
     private static Logger LOGGER = Logger.getLogger(Search.class);
@@ -38,10 +37,11 @@ public class Search {
     private IEvaluation iEvaluation;
     private IndexSearcher indexSearcher;
     private SearchStatistics statistics;
+    private BackMapping backMapping;
 
     public Search() throws IOException {
-        Directory directory = new MMapDirectory(new File("/workspace/erd/index_wikipedia"));
-
+        Directory directory = new MMapDirectory(new File(".\\src\\main\\resources\\data\\index_wikipedia"));
+        backMapping = new BackMapping();
         analyzer = new MyAnalyzer();
         IndexReader  indexreader = IndexReader.open(directory);
         indexSearcher = new IndexSearcher(indexreader);
@@ -52,7 +52,10 @@ public class Search {
         statistics = new SearchStatistics();
     }
 
-    public void processRecord(Record r, Configuration conf) throws IOException, ParseException {
+    public List<String> processRecord(Record r, Configuration conf) throws IOException, ParseException {
+        if (conf == null){
+            conf = new DefaultConfiguration();
+        }
         TokenStream stream = analyzer.tokenStream(null, new StringReader(r.getUtterance()));
         //TokenStream stream = analyzer.tokenStream(null, new StringReader(r.getAnswer()));
         CharTermAttribute cattr = stream.addAttribute(CharTermAttribute.class);
@@ -65,7 +68,7 @@ public class Search {
         stream.end();
         stream.close();
         String newQuery = strBuilder.toString().trim();
-        this.retrieve(r, newQuery, conf);
+        return this.retrieve(r, newQuery, conf);
     }
 
     public int getScore() {
@@ -73,10 +76,40 @@ public class Search {
         return statistics.getScore();
     }
 
-    private boolean backMapped(String query, String form) {
-        boolean isMapped;
-        isMapped = query.toLowerCase().contains(form.toLowerCase());
-        return isMapped;
+    public  BackMapping backMapped(String query, String form) {
+        boolean isMapped = false;
+        boolean contains;
+        int string_count = 0;
+        String result = "";
+        form = form.replaceAll("[^a-zA-Z0-9]+", " ").trim();
+        String [] split = form.split(" ");
+        split = new HashSet<String>(Arrays.asList(split)).toArray(new String[0]);
+        if (split.length <= 2) {
+            if (split.length > 1 && form.matches(".*\\bdisambiguation\\b.*")) {
+                form = form.replace("disambiguation", "");
+            }
+            isMapped = query.toLowerCase().contains(form.toLowerCase().trim());
+            backMapping.setIsMapped(isMapped);
+            backMapping.setWords(form.trim());
+        } else {
+            for (String s : split){
+                if (s.length() < 3  && !Character.isUpperCase(s.charAt(0))){
+                    continue;
+                }
+                s = s.replaceAll("[^a-zA-Z0-9]+"," ").trim();
+                contains = query.toLowerCase().matches(".*\\b" + s.toLowerCase() + "\\b.*");
+                if (contains) {
+                    string_count++;
+                    result = result + " " + s;
+                }
+            }
+            if (string_count >= 2){
+                isMapped = true;
+                backMapping.setIsMapped(isMapped);
+                backMapping.setWords(result.trim());
+            }
+        }
+        return backMapping;
     }
 
     private String[] prepareFields( Map<String, Float> map) {
@@ -116,20 +149,22 @@ public class Search {
         return queryL;
     }
 
-    private void retrieve(Record record, String query, Configuration conf) throws IOException, ParseException {
+    private List<String> retrieve(Record record, String query, Configuration conf) throws IOException, ParseException {
         boolean backMapped_name = false;
         boolean backMapped = false;
         boolean backMapped_alias = false;
+        List<String> finalId = new ArrayList<>();
+        BackMapping backMappingResult_alias = null;
+        BackMapping backMappingResult_name = null;
+        BackMapping backMappingResult = null;
         ArrayList<String> toBackMapping = new ArrayList<String>();
         indexSearcher.setSimilarity(new MultiSimilarity(conf.getSims()));
         Query queryL = this.buildLuceneQuery(query, conf);
         TopDocs results = indexSearcher.search(queryL, conf.getNumSearchRes());
         ScoreDoc[] hits = results.scoreDocs;
+        List<ScoreDoc> backMappedResults = new ArrayList<ScoreDoc>();
 
-        // return hits;
-        // TUTO to ODREZ
-
-        String answer = record.getAnswer();
+        String answer =  record.getAnswer();
         float score = iEvaluation.getScore(hits, answer);
         statistics.statisticScore.count(score);
 
@@ -149,50 +184,84 @@ public class Search {
             backMapped_name = false;
             backMapped_alias = false;
             if (fb_name != null) {
-                backMapped_name = this.backMapped(record.getQuestion(), fb_name);
+                backMappingResult_name = this.backMapped(record.getQuestion(), fb_name);
+                backMapped_name =  backMappingResult_name.isMapped();
             }
             if (fb_alias != null) {
-                backMapped_alias = this.backMapped(record.getQuestion(), fb_alias);
+                backMappingResult_alias = this.backMapped(record.getQuestion(), fb_name);
+                backMapped_name =  backMappingResult_alias.isMapped();
             }
             if (backMapped_name) {
-                toBackMapping.add(fb_name.toLowerCase());
+                toBackMapping.add(backMappingResult_name.getWords().toLowerCase());
+                backMappedResults.add(hits[i]);
             } else if (backMapped_alias) {
-                toBackMapping.add(fb_alias.toLowerCase());
+                toBackMapping.add(backMappingResult_alias.getWords().toLowerCase());
+                backMappedResults.add(hits[i]);
             } else {
                 for (IndexableField altName : altNames) {
-                    backMapped = this.backMapped(record.getQuestion(), altName.stringValue());
+                    backMappingResult = this.backMapped(record.getQuestion(), altName.stringValue());
+                    backMapped = backMappingResult.isMapped();
                     if (backMapped) {
-                        String haystack = altName.stringValue().toLowerCase();
+                        String haystack = backMappingResult.getWords().toLowerCase();
                         toBackMapping.add(haystack);
+                        backMappedResults.add(hits[i]);
                         break;
                     }
                 }
             }
-            LOGGER.info(doc.get("title"));
+            LOGGER.info("title: " + doc.get("title") + " fb_name: " + fb_name + " fb_alias: " + fb_alias);
+        }
+        if ( backMappedResults.size() > 0) {
+        	for (int i = 0; i < backMappedResults.size(); i++){
+                ScoreDoc hit = backMappedResults.get(i);
+                Document finalDoc = indexSearcher.doc(hit.doc);
+                String resultId = finalDoc.get("title").trim().replaceAll("[^a-zA-Z0-9]+", " ").trim().replace(" ", "_");
+                finalId.add(resultId.trim());
+            }
+
+            LOGGER.info("FINAL RESULT IS: " + finalId);
+
+        } else {
+            LOGGER.info("CANNOT Be BACKMAPPED");
         }
         //USE BACKMAPPING TO MAPPED VALUES
         if (!toBackMapping.isEmpty()) {
             statistics.countBackMapped++;
             LOGGER.info("QUESTION CAN BE BACKMAPPED: " + record.getQuestion());
             String question = record.getUtterance();
+            Collections.sort(toBackMapping, new Comparator<String>() {
+                @Override
+                public int compare(String s, String t1) {
+                    return t1.length() - s.length();
+                }
+            });
             for (String backMap : toBackMapping) {
-                question = question.replaceAll(backMap, "").replace("?", "").trim();
+                String[] backArray = backMap.split(" ");
+                for (String b : backArray) {
+                    question = question.replaceAll(b, "").replace("?", "").trim();
+                }
             }
             LOGGER.info("BACKMAPPED QUERY: " + question);
-            Query queryBackMapped = this.buildLuceneQuery(question, conf);
-            TopDocs resultsBackMapped = indexSearcher.search(queryBackMapped, 5);
-            ScoreDoc[] hitsBackMapped = resultsBackMapped.scoreDocs;
+            if (question.length() > 0) {
+                Query queryBackMapped = this.buildLuceneQuery(question, conf);
+                TopDocs resultsBackMapped = indexSearcher.search(queryBackMapped, 5);
+                ScoreDoc[] hitsBackMapped = resultsBackMapped.scoreDocs;
 
-            answer = record.getAnswer();
-            for (int j = 0; j < hitsBackMapped.length; j++) {
-                Document docBackMapped = indexSearcher.doc(hitsBackMapped[j].doc);
-                LOGGER.info("ANSWERS FOR BACKMAPPED QUESTIONS: " + docBackMapped.get("title") + " --- back mapped---");
+                answer = record.getAnswer();
+                for (int j = 0; j < hitsBackMapped.length; j++) {
+                    Document docBackMapped = indexSearcher.doc(hitsBackMapped[j].doc);
+                    if (j == 0) {
+                        String resultBMId = docBackMapped.get("title").trim().replace(" ", "_");
+                        finalId.add(resultBMId.trim());
+                    }
+                    LOGGER.info("ANSWERS FOR BACKMAPPED QUESTIONS: " + docBackMapped.get("title") + " --- back mapped---");
+                }
+                LOGGER.info(question + ", " + answer);
+
             }
-            LOGGER.info(question + ", " + answer);
-
         }
+        return finalId;
     }
 
 
 }
-

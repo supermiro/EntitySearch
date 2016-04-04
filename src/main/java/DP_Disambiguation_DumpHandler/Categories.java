@@ -1,29 +1,26 @@
 package DP_Disambiguation_DumpHandler;
-
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 
 public class Categories {
-	private ArrayList <String> categoryList = null;
+	private HashSet<String> categoryList = null;
 
-	public ArrayList<String> getCategoryList() {
+	public HashSet<String> getCategoryList() {
 		return categoryList;
 	}
 	
-	public String getCategory(int index) {
-		return categoryList.get(index);
+	public void getCategory() {
+		//categoryList.get(index);
 	}
 	
-	public int addCategory(String category) {
-		if (!categoryList.contains(category))
-		{
-			categoryList.add(category);
-			return (categoryList.size()-1);
-		}
-		return categoryList.indexOf(category);
+	public void addCategory(String categoryName) {
+			categoryList.add(categoryName);
+		//return categoryList.in.indexOf(category);
 	}
 
 	public Categories() {
 		super();
-		this.categoryList = new ArrayList<String> ();
+		this.categoryList = new HashSet<String> (1000000);
 	}
 }

@@ -1,7 +1,9 @@
 package DP_Disambiguation_FeatureBuilding;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Set;
 
 import DP_Disambiguation_DumpHandler.Anchor;
 import DP_Disambiguation_DumpHandler.Dictionary;
@@ -16,10 +18,10 @@ public class GraphPatternAnalyser {
 		ArrayList<ID> oneHops = new ArrayList<ID> ();
 		
 		//get number of outgoingLinks from entity1
-		HashSet <ID> list1 = entity1.getOutgoingIDs();
+		Set <ID> list1 = entity1.getOutgoingIDs();
 				
 		//get number of ingoingLinks to entity 2
-		HashSet <ID> list2 = entity2.getOutgoingIDs();
+		Set <ID> list2 = entity2.getOutgoingIDs();
 				
 		//count overlappings between lists
 				
@@ -39,27 +41,24 @@ public class GraphPatternAnalyser {
 	
 		
 		//get number of outgoingLinks from entity1
-		HashSet<Tuple<Anchor, ID>> listTuples1 = entity1.getOutgoingTuples();
+		HashMap<ID,HashSet<Anchor>> listTuples1 = entity1.getOutgoingTuples();
 				
 		//get number of ingoingLinks to entity 2
-		HashSet<Tuple<Anchor, ID>> listTuples2 = entity2.getOutgoingTuples();
+		HashMap<ID,HashSet<Anchor>> listTuples2 = entity2.getOutgoingTuples();
 		
 		
-		for (Tuple<Anchor, ID> tuple : listTuples1)
+		for (ID id : listTuples1.keySet())
 		{
-			if (tuple.getSecond() == entity2)			
-				counter++;
+			if (id == entity2)			
+				counter += listTuples1.get(id).size();
 		}
 			
-		for (Tuple<Anchor, ID> tuple : listTuples2)
+		for (ID id : listTuples2.keySet())
 		{
-			if (tuple.getSecond() == entity1)
-				counter++;
+			if (id == entity2)			
+				counter += listTuples2.get(id).size();
 		}
-		
-		if (counter>0)
-			counter--;
-					
+							
 		return counter;
 	}
 		
@@ -69,10 +68,10 @@ public class GraphPatternAnalyser {
 		ArrayList<ID> listeners = new ArrayList<ID> ();
 		
 		//get number of outgoing links from entity1
-		HashSet <ID> list1 = entity1.getOutgoingIDs();
+		Set <ID> list1 = entity1.getOutgoingIDs();
 		
 		//get number of outgoing links from entity2
-		HashSet <ID> list2 = entity2.getOutgoingIDs();
+		Set <ID> list2 = entity2.getOutgoingIDs();
 		
 		//count overlappings between lists
 		
@@ -91,10 +90,10 @@ public class GraphPatternAnalyser {
 		ArrayList<ID> spokesmen = new ArrayList<ID> ();
 		
 		//get number of ingoing links to entity1
-		HashSet <ID> list1 = entity1.getIngoingIDs();
+		Set <ID> list1 = entity1.getIngoingIDs();
 		
 		//get number of in links to entity2
-		HashSet <ID> list2 = entity2.getIngoingIDs();
+		Set <ID> list2 = entity2.getIngoingIDs();
 		
 		//count overlappings between lists
 		

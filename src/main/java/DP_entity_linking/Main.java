@@ -4,6 +4,7 @@ import DP_entity_linking.dataset.DataSet;
 import DP_entity_linking.dataset.Record;
 import DP_entity_linking.search.Configuration;
 import DP_entity_linking.search.DefaultConfiguration;
+import DP_entity_linking.search.FinalSearch;
 import DP_entity_linking.search.Search;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
@@ -27,7 +28,7 @@ public class Main {
         // Spracuj dataset
         DataSet dataset = new DataSet();
         List<Record> records = dataset.loadWebquestions();
-        records = records.subList(0, 200);
+        records = records.subList(0, 2000);
         Configuration conf;
 
         // Konfiguracia ziskana cez chromozon
@@ -37,17 +38,16 @@ public class Main {
 
         // Defaultna konfiguracia
         conf = new DefaultConfiguration();
-
         Search search = new Search();
         search.start();
-
         for (Record record : records) {
-            LOGGER.info("------------" + record.getUtterance() + "--------------");
-            search.processRecord(record, conf);
+            //LOGGER.info("------------" + record.getUtterance() + "--------------");
+            List<String> a = search.processRecord(record, null);
+            //LOGGER.info("+++++++++++++++++" + a + "++++++++++==");
         }
 
         int fitness = search.getScore();
-        LOGGER.info("------------" + Integer.toString(fitness) + "--------------");
+        //LOGGER.info("------------" + Integer.toString(fitness) + "--------------");
     }
 
 

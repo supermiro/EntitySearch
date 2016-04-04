@@ -3,15 +3,16 @@ package DP_Disambiguation_DumpHandler;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Set;
 
 public class ID {
 
 	private double pageRank = 0;
 	private String name = null;
-	private ArrayList <String> categories = null;
-	private HashSet <Tuple<Anchor,ID>> outgoings = null;
-	private HashSet <Tuple<Anchor,ID>> ingoings = null;
-	private ArrayList <DBpediaType> dBpediaTypes = null;
+	private HashSet <String> categories = null;
+	private HashMap <ID,HashSet<Anchor>> outgoings = null;
+	private HashMap <ID,HashSet<Anchor>> ingoings = null;
+	private HashSet <DBpediaType> dBpediaTypes = null;
 	
 
 	
@@ -19,10 +20,10 @@ public class ID {
 	public ID(String name) {
 		super();
 		this.name = name;
-		this.categories = new ArrayList <String> ();
-		this.outgoings = new HashSet <Tuple<Anchor,ID>>();
-		this.ingoings = new HashSet <Tuple<Anchor,ID>>();
-		this.dBpediaTypes = new ArrayList <DBpediaType>();
+		this.categories = new HashSet <String> (10);
+		this.outgoings = new HashMap <ID,HashSet<Anchor>> (10);
+		this.ingoings = new HashMap <ID,HashSet<Anchor>> (10);
+		this.dBpediaTypes = new HashSet <DBpediaType>(10);
 	}
 
 	public double getPageRank() {
@@ -41,7 +42,7 @@ public class ID {
 		this.name = name;
 	}
 
-	public ArrayList<DBpediaType> getDBpediaTypes() {
+	public HashSet<DBpediaType> getDBpediaTypes() {
 		return dBpediaTypes;
 	}
 
@@ -49,42 +50,50 @@ public class ID {
 		this.dBpediaTypes.add(dBpediaTypes);
 	}
 
-	public ArrayList<String> getCategories() {
+	public HashSet<String> getCategories() {
 		return categories;
 	}
 
-	public void addCategory(String category) {
-		this.categories.add(category);
+	public void addCategory(String categoryName) {
+			this.categories.add(categoryName);
 	}
 
-	public HashSet<Tuple<Anchor,ID>> getOutgoingTuples() {
+	public HashMap<ID,HashSet<Anchor>> getOutgoingTuples() {
 		return outgoings;
 	}
 
-	public HashSet<Tuple<Anchor,ID>> getIngoingTuples() {
+	public HashMap<ID,HashSet<Anchor>>  getIngoingTuples() {
 		return ingoings;
 	}
 	
 	public void addOutgoing(Tuple <Anchor,ID> outgoingTuple) {
-		
+		/*
 		for (Tuple <Anchor,ID> tuple : this.outgoings)
 		{
 			if (tuple.getFirst() == outgoingTuple.getFirst() && tuple.getSecond() == outgoingTuple.getSecond())
 				return;
 		}
+		*/
+		HashSet<Anchor> anchors = this.outgoings.get(outgoingTuple.getSecond());
 		
-		this.outgoings.add(outgoingTuple);
+		if (anchors == null)
+			anchors = new HashSet<Anchor> ();
+		
+		anchors.add(outgoingTuple.getFirst());
+		
+		this.outgoings.put(outgoingTuple.getSecond(),anchors);
 	}
 
 	public void addIngoing(Tuple <Anchor,ID> ingoingTuple) {
 		
-		for (Tuple <Anchor,ID> tuple : this.ingoings)
-		{
-			if (tuple.getFirst() == ingoingTuple.getFirst() && tuple.getSecond() == ingoingTuple.getSecond())
-				return;
-		}
+		HashSet<Anchor> anchors = this.ingoings.get(ingoingTuple.getSecond());
 		
-		this.ingoings.add(ingoingTuple);
+		if (anchors == null)
+			anchors = new HashSet<Anchor> ();
+		
+		anchors.add(ingoingTuple.getFirst());
+		
+		this.ingoings.put(ingoingTuple.getSecond(),anchors);
 	}
 	
 	public int getNumberOfOutgoing(){
@@ -95,28 +104,14 @@ public class ID {
 		return this.ingoings.size();
 	}
 	
-	public HashSet<ID> getIngoingIDs(){
-
-		HashSet<ID> uniqueIngoingIDs = new HashSet<ID>();
+	public Set<ID> getIngoingIDs(){
 		
-		for (Tuple <Anchor,ID> tuple : this.ingoings)
-		{
-			uniqueIngoingIDs.add(tuple.getSecond());
-		}
-		
-		return uniqueIngoingIDs;
+		return this.ingoings.keySet();
 	}
 	
-	public HashSet<ID> getOutgoingIDs(){
+	public Set<ID> getOutgoingIDs(){
 		
-		HashSet<ID> uniqueOutgoingIDs = new HashSet<ID>();
-		
-		for (Tuple <Anchor,ID> tuple : this.outgoings)
-		{
-			uniqueOutgoingIDs.add(tuple.getSecond());
-		}
-		
-		return uniqueOutgoingIDs;
+		return this.outgoings.keySet();
 	}
 	
 }

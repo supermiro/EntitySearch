@@ -11,8 +11,8 @@ private HashMap <String,ID> iDs;
 
 public Dictionary() {
 	super();
-	this.anchors = new HashMap<String,Anchor>();
-	this.iDs = new HashMap<String,ID>();
+	this.anchors = new HashMap<String,Anchor>(5000000);
+	this.iDs = new HashMap<String,ID>(1000000);
 }
 public HashMap getAnchors() 
 	{
@@ -24,16 +24,13 @@ public HashMap<String, ID> getIDs()
 	}
 public ID addLink (String linkID)
 {
-	ID iD = null;
-	if (!iDs.containsKey(linkID) )
-	{
-		iD = new ID(linkID);
-		iDs.put(linkID,iD);
-	}
-	else
-		iD = iDs.get(linkID);
-
 	
+		ID iD = new ID(linkID);
+		ID tempId = iDs.put(linkID,iD);
+		
+		if (tempId != null)
+			iDs.put(linkID,tempId);
+		
 	return iD;
 }
 
@@ -42,31 +39,19 @@ public Tuple<Anchor,ID> addAnchorLink (String anchorID, String linkID)
 	ID iDObject = null;
 	Anchor anchorObject = null;
 	
-	//we take this link as relevant only if we account given entity ID
-	if (iDs.containsKey(linkID))
+		
+	if ((iDObject = iDs.get(linkID)) != null)
 	{
-		iDObject = iDs.get(linkID);
-	}
-	else
-		return null;
-	
-	//check whether we already have this ANCHOR...if not we build it
-	if (anchors.containsKey(anchorID))
-	{
-		anchorObject = anchors.get(anchorID);
-	}
-	else
-	{
-		anchorObject = new Anchor (anchorID);
-		this.anchors.put(anchorID, anchorObject);
+			if ((anchorObject = anchors.get(anchorID)) == null)
+					anchorObject = new Anchor (anchorID);
+			
+			anchorObject.addReferencedID(iDObject);
+			this.anchors.put(anchorID, anchorObject);
+			
+		return new Tuple<Anchor, ID> (anchorObject,iDObject);
 	}
 	
-	if (! anchorObject.getAllReferencedIDs().contains(iDObject))
-	{
-		anchorObject.addReferencedID(iDObject);
-	}
-	
-	return new Tuple<Anchor, ID> (anchorObject,iDObject);
+	return null;
 }
 
 

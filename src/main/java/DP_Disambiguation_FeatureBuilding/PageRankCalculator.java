@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Set;
 
 import DP_Disambiguation_DumpHandler.ID;
 import DP_Disambiguation_DumpHandler.Printer;
@@ -29,7 +30,7 @@ public class PageRankCalculator {
 			pivotPageRank = (1-dumpingFactor)*(1/((double)iDs.size()));
 			
 			//i create a list of all entities it is pointing to
-			HashSet <ID>linkingIDs = iD.getIngoingIDs();
+			Set <ID>linkingIDs = iD.getIngoingIDs();
 			for (ID linkingID:linkingIDs)
 			{
 				linkingPageRank = linkingID.getPageRank();

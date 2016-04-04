@@ -7,7 +7,7 @@ public class RedirectList {
 
 	public RedirectList() {
 		super();
-		this.redirectList = new HashMap <String,ID> ();
+		this.redirectList = new HashMap <String,ID> (3000000,1);
 	}
 
 	public HashMap<String, ID> getRedirectList() {
@@ -19,10 +19,11 @@ public class RedirectList {
 	}
 	
 	public String getRedirectName(String redirect) {
-		if (redirectList.get(redirect) != null)
-			return redirectList.get(redirect).getName();
-		else
-			return null;
+		
+			if (redirectList.get(redirect) != null)
+				return redirectList.get(redirect).getName();
+			else
+				return null;
 	}
 
 }

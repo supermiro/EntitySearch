@@ -149,6 +149,25 @@
         	<groupId>com.esotericsoftware.kryo</groupId>
         	<artifactId>kryo</artifactId>
         </dependency>
+        <dependency>
+        	<groupId>com.github.johnlangford</groupId>
+        	<artifactId>vw-jni</artifactId>
+        	<version>8.1.2-SNAPSHOT</version>
+        </dependency>
+        
+        <dependency>
+        	<groupId>org.dmlc</groupId>
+        	<artifactId>xgboost4j</artifactId>
+        	<version>1.1</version>
+        </dependency>
+        
+        <dependency>
+			<groupId>com.github.johnlangford</groupId>
+			<artifactId>vw-jni</artifactId>
+			<version>8.1.0</version>
+		</dependency>
+        
+        
     </dependencies>
 
     <build>
