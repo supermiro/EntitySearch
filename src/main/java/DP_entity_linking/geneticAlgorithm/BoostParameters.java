@@ -25,6 +25,9 @@ public class BoostParameters implements GenSequence<Map<String, Float>>, Seriali
         konfiguracia.put("section", new Interval(0.0f, 1.0f, 100)); //  sekcia hlavi?ky ?lánku,
         konfiguracia.put("fb_name", new Interval(0.0f, 1.0f, 100)); //  Freebase názov ?lánku,
         konfiguracia.put("fb_alias", new Interval(0.0f, 1.0f, 100)); //  alternatívne názvy ?lánku vo Freebase,
+        konfiguracia.put("anchor", new Interval(0.0f, 1.0f, 100));
+        konfiguracia.put("abs", new Interval(0.0f, 1.0f, 100));
+
 
         for (Map.Entry<String, Interval> entry : konfiguracia.entrySet()) {
             if(rnd == null) {

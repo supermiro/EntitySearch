@@ -2,6 +2,7 @@ package DP_entity_linking;
 
 import DP_entity_linking.dataset.DataSet;
 import DP_entity_linking.dataset.Record;
+import DP_entity_linking.geneticAlgorithm.Chromosome;
 import DP_entity_linking.search.*;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
@@ -16,7 +17,6 @@ import java.util.Random;
  */
 public class Main {
     private static Logger LOGGER = Logger.getLogger(Main.class);
-
     /**
      * Call retrieveRecords and write to log
      * @throws IOException
@@ -27,36 +27,64 @@ public class Main {
         List<Record> records = dataset.loadWebquestions();
         records = records.subList(0, 3700);
         Configuration conf;
+        Configuration bestConf = null;
         ResultPreprocessing result = new ResultPreprocessing();
 
         // Configuration via chromozom
-        //Chromosome chromosome = new Chromosome();
-        //chromosome.create(randnum);
-       // conf = chromosome.get();
+        Chromosome chromosome = new Chromosome();
 
         // Defaultna konfiguracia
         conf = new DefaultConfiguration();
-        Search search = new Search();
-        search.start();
-        FinalSearch finalSearch = new FinalSearch();
 
-        List<String> finalAnswer = finalSearch.processRecord("what did darry look like", null);
-        List<List<String>> f = result.results("what did darry look like", finalAnswer);
-        LOGGER.info("+++++++++++++++++" + f + "++++++++++==");
-        for (Record record : records) {
-            LOGGER.info("------------" + record.getUtterance() + "--------------");
-            List<String> a = search.processRecord(record, null);
-            if (a.size() > 0) {
-                List<List<String>> finalResultPreprocessed = result.results(record.getQuestion(), a);
-                LOGGER.info("+++++++++++++++++" + finalResultPreprocessed + "++++++++++==");
-            } else {
-                LOGGER.info("NOT FOUND!");
+        int bestFitnes = 0;
+        int countBM = 0;
+        //for (int i = 0; i < 100; i++) {
+            boolean confFound = false;
+            //chromosome.create(randnum);
+            //conf = chromosome.get();
+            Search search = new Search();
+            search.start();
+            //FinalSearch finalSearch = new FinalSearch();
+
+            //List<String> finalAnswer = finalSearch.processRecord("what did darry look like", null);
+            //List<List<String>> f = result.results("what did darry look like", finalAnswer);
+            //LOGGER.info("+++++++++++++++++" + f + "++++++++++==");
+
+            //LOGGER.info("CONF: " + conf);
+
+            for (Record record : records) {
+                LOGGER.info("------------" + record.getUtterance() + "--------------");
+                List<String> a = search.processRecord(record, conf);
+                if (a.size() > 0) {
+                    List<List<String>> finalResultPreprocessed = result.results(record.getQuestion(), a);
+                    LOGGER.info("+++++++++++++++++" + finalResultPreprocessed + "++++++++++==");
+                } else {
+                   LOGGER.info("NOT FOUND!");
+                }
+
             }
 
-        }
+            int fitness = search.getScore();
+            LOGGER.warn("NEW BESTFITNESS: " + Integer.toString(fitness));
+        /*if (bestFitnes <= fitness) {
+                bestFitnes = fitness;
+                bestConf = conf;
+                countBM = search.getCountBackMapped();
+                if (search.getCountBackMapped() > countBM) {
+                    confFound = true;
+                }
+                LOGGER.warn(i + " NEW CONF: " + bestConf);
+                LOGGER.warn("NEW BESTFITNESS: " + Integer.toString(bestFitnes));
+            }
+            if (confFound) {
+                LOGGER.warn(i + " NEW BESTCONF WITH BEST POSSIBLE BACKMAPPING: " + bestConf);
+            } else {
 
-        int fitness = search.getScore();
-        LOGGER.info("------------" + Integer.toString(fitness) + "--------------");
+            }
+        }*/
+
+        //int fitness = search.getScore();
+        //LOGGER.info("------------" + Integer.toString(fitness) + "--------------");
     }
 
 

@@ -76,6 +76,10 @@ public class Search {
         return statistics.getScore();
     }
 
+    public int getCountBackMapped() {
+        return statistics.getCountBackMapped();
+    }
+
     private String[] prepareFields( Map<String, Float> map) {
         int size = map.size();
         String[] fields = new String[size];
@@ -180,7 +184,7 @@ public class Search {
                     }
                 }
             }
-            LOGGER.info("title: " + doc.get("title") + " fb_name: " + fb_name + " fb_alias: " + fb_alias);
+            //LOGGER.info("title: " + doc.get("title") + " fb_name: " + fb_name + " fb_alias: " + fb_alias);
         }
         if ( backMappedResults.size() > 0) {
             for (int i = 0; i < backMappedResults.size(); i++){
@@ -189,10 +193,10 @@ public class Search {
                 String resultId = finalDoc.get("title").trim().replaceAll("[^a-zA-Z0-9]+", " ").trim().replace(" ", "_");
                 finalId.add(resultId.trim());
             }
-            LOGGER.info("FINAL RESULT IS: " + finalId);
+            //LOGGER.info("FINAL RESULT IS: " + finalId);
 
         } else {
-            LOGGER.info("CANNOT Be BACKMAPPED");
+            //LOGGER.info("CANNOT Be BACKMAPPED");
             for (int i = 0; i < hits.length; i++) {
                 Document doc = indexSearcher.doc(hits[i].doc);
 
@@ -203,7 +207,7 @@ public class Search {
         //USE BACKMAPPING TO MAPPED VALUES
         if (!toBackMapping.isEmpty()) {
             statistics.countBackMapped++;
-            LOGGER.info("QUESTION CAN BE BACKMAPPED: " + record.getQuestion());
+            //LOGGER.info("QUESTION CAN BE BACKMAPPED: " + record.getQuestion());
             String question = record.getUtterance();
             Collections.sort(toBackMapping, new Comparator<String>() {
                 @Override
@@ -217,7 +221,7 @@ public class Search {
                     question = question.replaceAll(b, "").replace("?", "").trim();
                 }
             }
-            LOGGER.info("BACKMAPPED QUERY: " + question);
+            //LOGGER.info("BACKMAPPED QUERY: " + question);
             if (question.length() > 0) {
                 Query queryBackMapped = this.buildLuceneQuery(question, conf);
                 TopDocs resultsBackMapped = indexSearcher.search(queryBackMapped, 5);
@@ -228,9 +232,9 @@ public class Search {
                     Document docBackMapped = indexSearcher.doc(hitsBackMapped[j].doc);
                     String resultBMId = docBackMapped.get("title").trim().replace(" ", "_");
                     finalId.add(resultBMId.trim());
-                    LOGGER.info("ANSWERS FOR BACKMAPPED QUESTIONS: " + docBackMapped.get("title") + " --- back mapped---");
+                    //LOGGER.info("ANSWERS FOR BACKMAPPED QUESTIONS: " + docBackMapped.get("title") + " --- back mapped---");
                 }
-                LOGGER.info(question + ", " + answer);
+                //LOGGER.info(question + ", " + answer);
 
             }
         }

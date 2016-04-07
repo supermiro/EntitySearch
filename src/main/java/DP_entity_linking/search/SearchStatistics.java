@@ -19,7 +19,9 @@ public class SearchStatistics {
     public Statistics<String> statisticFbCategory = new Statistics();
     public int countBackMapped = 0;
 
-
+        public int getCountBackMapped() {
+            return countBackMapped;
+        }
     public void print() {
         for (Map.Entry entry : statisticScore.entrySet()) {
             LOGGER.info(entry.getKey() + "," + entry.getValue());
