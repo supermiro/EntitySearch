@@ -21,6 +21,7 @@ public class SearchStatistics {
 
         public int getCountBackMapped() {
             return countBackMapped;
+
         }
     public void print() {
         for (Map.Entry entry : statisticScore.entrySet()) {
