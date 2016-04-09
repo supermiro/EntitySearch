@@ -23,7 +23,7 @@ public class Main {
      */
     public void doJob(Random randnum) throws IOException, ParseException {
         // Spracuj dataset
-        DataSet dataset = new DataSet();
+        DataSet dataset = new DataSet("C:\\workspace\\webquestions.json");
         List<Record> records = dataset.loadWebquestions();
         records = records.subList(0, 3700);
         Configuration conf;

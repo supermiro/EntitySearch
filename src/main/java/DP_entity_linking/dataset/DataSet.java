@@ -13,20 +13,25 @@ import java.util.List;
  * Created by miroslav.kudlac on 11/22/2015.
  */
 public class DataSet {
-    private static Logger LOGGER = Logger.getLogger(Search.class);
-    private static final File JSON_FILE = new File("C:\\workspace\\webquestions.train");
 
-    public static class Records extends ArrayList<Record> {
-        public Records() {
-        }
-    }
+	private static Logger LOGGER = Logger.getLogger(Search.class);
+	private static File JSON_FILE;
 
-    /**
-     * @return
-     * @throws IOException
-     */
-    public List<Record> loadWebquestions() throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        return (List<Record>)mapper.readValue(JSON_FILE, Records.class);
-    }
+	public DataSet(String path) {
+		JSON_FILE = new File(path);
+	}
+
+	public static class Records extends ArrayList<Record> {
+		public Records() {
+		}
+	}
+
+	/**
+	 * @return
+	 * @throws IOException
+	 */
+	public List<Record> loadWebquestions() throws IOException {
+		ObjectMapper mapper = new ObjectMapper();
+		return (List<Record>) mapper.readValue(JSON_FILE, Records.class);
+	}
 }

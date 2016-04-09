@@ -125,6 +125,44 @@
         </dependency>
 
 
+        <dependency>
+        	<groupId>org.apache.commons</groupId>
+        	<artifactId>commons-math3</artifactId>
+        </dependency>
+        <dependency>
+        	<groupId>org.apache.commons</groupId>
+        	<artifactId>commons-lang3</artifactId>
+        </dependency>
+        <dependency>
+        	<groupId>commons-io</groupId>
+        	<artifactId>commons-io</artifactId>
+        </dependency>
+        <dependency>
+        	<groupId>org.jblas</groupId>
+        	<artifactId>jblas</artifactId>
+        </dependency>
+        <dependency>
+        	<groupId>me.lemire.integercompression</groupId>
+        	<artifactId>JavaFastPFOR</artifactId>
+        </dependency>
+        <dependency>
+        	<groupId>com.esotericsoftware.kryo</groupId>
+        	<artifactId>kryo</artifactId>
+        </dependency>
+        <dependency>
+        	<groupId>edu.stanford.nlp</groupId>
+        	<artifactId>stanford-corenlp</artifactId>
+        </dependency>
+        <dependency>
+        	<groupId>edu.mit</groupId>
+        	<artifactId>jwi</artifactId>
+        	<version>2.2.3</version>
+        </dependency>
+        <dependency>
+        	<groupId>edu.washington.cs.knowitall.openie</groupId>
+        	<artifactId>openie_2.10</artifactId>
+        	<version>4.1</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -189,5 +227,44 @@
 
         </plugins>
     </build>
+    <dependencyManagement>
+    	<dependencies>
+    		<dependency>
+    			<groupId>org.apache.commons</groupId>
+    			<artifactId>commons-math3</artifactId>
+    			<version>3.5</version>
+    		</dependency>
+    		<dependency>
+    			<groupId>org.apache.commons</groupId>
+    			<artifactId>commons-lang3</artifactId>
+    			<version>3.3.2</version>
+    		</dependency>
+    		<dependency>
+    			<groupId>commons-io</groupId>
+    			<artifactId>commons-io</artifactId>
+    			<version>2.4</version>
+    		</dependency>
+    		<dependency>
+    			<groupId>org.jblas</groupId>
+    			<artifactId>jblas</artifactId>
+    			<version>1.2.3</version>
+    		</dependency>
+    		<dependency>
+    			<groupId>me.lemire.integercompression</groupId>
+    			<artifactId>JavaFastPFOR</artifactId>
+    			<version>0.0.12</version>
+    		</dependency>
+    		<dependency>
+    			<groupId>com.esotericsoftware.kryo</groupId>
+    			<artifactId>kryo</artifactId>
+    			<version>2.24.0</version>
+    		</dependency>
+    		<dependency>
+    			<groupId>edu.stanford.nlp</groupId>
+    			<artifactId>stanford-corenlp</artifactId>
+    			<version>3.6.0</version>
+    		</dependency>
+    	</dependencies>
+    </dependencyManagement>
 </project>
 
