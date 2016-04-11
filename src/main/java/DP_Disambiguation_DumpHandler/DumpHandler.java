@@ -76,7 +76,7 @@ public abstract class DumpHandler extends DefaultHandler{
 			saxParser.parse(is, this.currentHandler);
 	}			   
 
-	public Boolean isSpecialNameSpace (String pageTitle)
+	public static Boolean isSpecialNameSpace (String pageTitle)
 	{
 		if (	pageTitle.matches("")
 				|| pageTitle.matches("^[Mm]ediazilla::.*")

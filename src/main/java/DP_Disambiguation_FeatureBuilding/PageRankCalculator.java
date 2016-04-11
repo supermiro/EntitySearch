@@ -30,7 +30,7 @@ public class PageRankCalculator {
 			pivotPageRank = (1-dumpingFactor)*(1/((double)iDs.size()));
 			
 			//i create a list of all entities it is pointing to
-			Set <ID>linkingIDs = iD.getIngoingIDs();
+			Set <ID>linkingIDs = new HashSet (iD.getIngoingIDs());
 			for (ID linkingID:linkingIDs)
 			{
 				linkingPageRank = linkingID.getPageRank();

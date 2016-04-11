@@ -7,6 +7,13 @@
     <name>erd-contest</name>
     <description>Entity Linking Challenge</description>
 
+	<repositories>
+	  <repository>
+	    <id>bintray-komiya-atsushi-maven</id>
+	    <url>http://dl.bintray.com/komiya-atsushi/maven</url>
+	  </repository>
+	</repositories>
+
     <dependencies>
 
 
@@ -166,8 +173,12 @@
 			<artifactId>vw-jni</artifactId>
 			<version>8.1.0</version>
 		</dependency>
-        
-        
+
+  <dependency>
+    <groupId>biz.k11i</groupId>
+    <artifactId>xgboost-predictor</artifactId>
+    <version>0.1.7</version>
+  </dependency>
     </dependencies>
 
     <build>

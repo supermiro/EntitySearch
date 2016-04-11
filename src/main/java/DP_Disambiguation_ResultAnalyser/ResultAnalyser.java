@@ -1,5 +1,4 @@
 package DP_Disambiguation_ResultAnalyser;
-
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -140,7 +139,7 @@ public class ResultAnalyser
 	
 	}
 	
-	public static void orderCandidates (String canonicID, ArrayList <ArrayList<String>> listOfCandidateLists,Dictionary anchorLink, RedirectList listOfRedirects, Record record, String method) throws IOException, InterruptedException, XGBoostError, XPathExpressionException, ParserConfigurationException, SAXException, ParseException{
+	public static void orderCandidates (String canonicID, ArrayList <ArrayList<String>> listOfCandidateLists,Dictionary anchorLink, HashMap <String,String> listOfRedirects, Record record, String method) throws IOException, InterruptedException, XGBoostError, XPathExpressionException, ParserConfigurationException, SAXException, ParseException{
 		ArrayList<Integer> endIndexes=null;
 		ArrayList<String> vowpalInstances = null;
 		ArrayList<String> xgInstances = null;
@@ -175,7 +174,7 @@ public class ResultAnalyser
 		
 		if (method.equals("xgboost"))
 		{
-			//xgBoostPrediction = xgBoostWrapper.predict(vowpalInstances, "src\\main\\resources\\data\\dataSets\\xgBoostModel.dat");
+			xgBoostPrediction = xgBoostWrapper.predict(vowpalInstances, "src\\main\\resources\\data\\dataSets\\xgBoostModel.dat");
 			result = ResultAnalyser.interpretePrediction(null, xgBoostPrediction);
 			
 		}

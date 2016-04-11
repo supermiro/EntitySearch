@@ -28,12 +28,12 @@ import DP_Disambiguation_xgBoost.xgBoostWrapper;
 public class EntityAnalyser {
 	
 	private Dictionary anchorLinkDictionary;
-	private RedirectList listOfRedirects;
+	private HashMap <String,String> listOfRedirects;
 	private GraphPatternAnalyser patternAnalyser;
 	private PrintWriter writer;
 	
 
-	public EntityAnalyser(Dictionary anchorLinkDictionary, RedirectList listOfRedirects) {
+	public EntityAnalyser(Dictionary anchorLinkDictionary, HashMap <String,String> listOfRedirects) {
 		super();
 		this.anchorLinkDictionary = anchorLinkDictionary;
 		this.listOfRedirects = listOfRedirects;
@@ -155,21 +155,21 @@ public class EntityAnalyser {
 			System.out.println("Number of ingoing links - " + entity.getNumberOfIngoing());
 			System.out.println("Page rank - " + entity.getPageRank());
 			
-			if (entity.getIngoingTuples().size() != 0)
+			if (entity.getIngoings().size() != 0)
 			{	
 				System.out.println("Connected entities - ");
-				if (entity.getIngoingTuples().size() != 0)
+				if (entity.getIngoings().size() != 0)
 					{
 						System.out.println("--Entities linking here--");
-						for (ID refferencedID: entity.getIngoingTuples().keySet())
-							for (Anchor refferencedAnchor: entity.getIngoingTuples().get(refferencedID))
+						for (ID refferencedID: new HashSet <ID>(entity.getIngoingIDs()))
+							for (Anchor refferencedAnchor: entity.getAnchors())
 								System.out.println("\t - " + refferencedID.getName() + "\t\t\t throug anchor " + refferencedAnchor.getName() );
 					}
-				if (entity.getOutgoingTuples().size() != 0)
+				if (entity.getOutgoings().size() != 0)
 				{
 					System.out.println("--Entities linked from here--");
-					for (ID refferencedID: entity.getOutgoingTuples().keySet())
-						for (Anchor refferencedAnchor: entity.getOutgoingTuples().get(refferencedID))
+					for (ID refferencedID: new HashSet <ID>(entity.getOutgoingIDs()))
+						for (Anchor refferencedAnchor: entity.getAnchors())
 							System.out.println("\t - " + refferencedID.getName() + "\t\t\t throug anchor " + refferencedAnchor.getName() );
 				}
 				
@@ -242,7 +242,7 @@ public class EntityAnalyser {
  		{
  			visited.add(((ID)canonicElement));
  			//take each element it is pointing to (because each pointing to is also somewhere documented as pointing in, what we dont need for duplicities)
- 			for (ID candidateEntity : ((ID)canonicElement).getOutgoingIDs())
+ 			for (ID candidateEntity : new HashSet <ID>(((ID)canonicElement).getOutgoingIDs()))
  			{
  				//If the element is not listed in the ID list before, create an positive association (in case of double linking bothsided, we will otherwise have duplicities)
  		 		if (!visited.contains(candidateEntity))
@@ -269,8 +269,8 @@ public class EntityAnalyser {
  		for (Object canonicEntity : anchorLink.getIDs().values())
  		{
  			//list all of the anchors that the canonicID has
- 			for (ID refferencedID : ((ID)canonicEntity).getOutgoingTuples().keySet())
- 			for (Anchor refferencedAnchor : ((ID)canonicEntity).getOutgoingTuples().get(refferencedID))
+ 			//for (ID refferencedID : ((ID)canonicEntity).getOutgoings().keySet())
+ 			for (Anchor refferencedAnchor : ((ID)canonicEntity).getAnchors())
  			{
  				//we get anchor and the entire list of where this anchor links without the entity the list truly points to
  				HashSet <ID> referencedIDs = refferencedAnchor.getAllReferencedIDs();
@@ -337,8 +337,9 @@ public class EntityAnalyser {
  		if (entityCanonic == null)
  		{
  			//first we check if we dont handle a redirect
- 			if (this.listOfRedirects.getRedirectName(canonicID) != null)
- 				entityCanonic = this.anchorLinkDictionary.getIDs().get(this.listOfRedirects.getRedirectName(canonicID));
+ 			if (this.listOfRedirects.containsKey(canonicID))
+ 				entityCanonic = this.anchorLinkDictionary.getIDs().get(this.listOfRedirects.get(canonicID));
+ 			
  		}
  		
  		if (entityCanonic == null || entityCandidates.size()==0)
@@ -361,8 +362,8 @@ public class EntityAnalyser {
 		 			if (entityCandidate == null)
 		 			{
 		 				//first we check for redirect
-		 				if (this.listOfRedirects.getRedirectName(candidateID) != null)
-		 					entityCandidate = this.anchorLinkDictionary.getIDs().get(this.listOfRedirects.getRedirectName(canonicID));
+		 				if (this.listOfRedirects.containsKey(candidateID))
+		 					entityCandidate = this.anchorLinkDictionary.getIDs().get(this.listOfRedirects.get(canonicID));
 		 			}
 		 			
 		 			if (entityCandidate == null)

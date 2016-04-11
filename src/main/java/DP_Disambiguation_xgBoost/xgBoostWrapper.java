@@ -2,17 +2,21 @@ package DP_Disambiguation_xgBoost;
 
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.AbstractMap.SimpleEntry;
 import java.util.Map.Entry;
 
 import org.apache.log4j.BasicConfigurator;
@@ -20,6 +24,10 @@ import org.dmlc.xgboost4j.DMatrix;
 import org.dmlc.xgboost4j.Booster;
 import org.dmlc.xgboost4j.util.Trainer;
 import org.dmlc.xgboost4j.util.XGBoostError;
+
+import biz.k11i.xgboost.Predictor;
+import biz.k11i.xgboost.util.FVec;
+
 
  public class xgBoostWrapper {
 
@@ -169,9 +177,70 @@ import org.dmlc.xgboost4j.util.XGBoostError;
 			//saving model
 			booster.saveModel(modelPath);
 		}
-	 /*
+	 
 	public static ArrayList<String> predict (ArrayList<String> input, String modelPath) throws XGBoostError, FileNotFoundException, UnsupportedEncodingException, IOException
 	{	
+		 double sum = 0;
+		 Predictor predictor = new Predictor(xgBoostWrapper.class.getResourceAsStream(modelPath));
+		 ArrayList <String> output = new ArrayList <String>();
+		
+		  List<SimpleEntry<Integer, FVec>> data = new ArrayList<>();
+
+	        for (String line : input) 
+		        {
+		            String[] values = line.split(" ");
+	
+		            Map<Integer, Float> map = new HashMap<>();
+	
+		            for (int i = 1; i < values.length; i++) {
+		                String[] pair = values[i].split(":");
+		                map.put(Integer.parseInt(pair[0]), Float.parseFloat(pair[1]));
+		            }
+	
+		            data.add(new SimpleEntry<>(Integer.parseInt(values[0]), FVec.Transformer.fromMap(map)));
+		        }
+
+	        
+	        
+
+	        for (SimpleEntry<Integer, FVec> pair : data) {
+
+	            double[] predicted = predictor.predict(pair.getValue());
+
+	            System.out.println(predicted[0]);
+	            output.add(Double.toString(predicted[0]));
+	            
+	            
+	            double predValue = Math.min(Math.max(predicted[0], 1e-15), 1 - 1e-15);
+	            System.out.println("alternative\t" + predicted[0]);
+	            //int actual = pair.getKey();
+	            //sum = actual * Math.log(predValue) + (1 - actual) * Math.log(1 - predValue);
+	        }
+
+	       // double logLoss = -sum / data.size();
+
+	       // System.out.println("Logloss: " + logLoss);
+	        
+	        
+			
+			return output;	
+		
+		
+		
+		/*
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		
 		BasicConfigurator.configure();
 		//-----setting up train and test data-----
@@ -245,7 +314,7 @@ import org.dmlc.xgboost4j.util.XGBoostError;
 		
 		//predict leaf
 		
-	
-	}
 	*/
+	}
+	
 }

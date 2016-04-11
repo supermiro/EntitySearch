@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -24,6 +25,7 @@ import DP_Disambiguation_DumpHandler.DumpHandler;
 import DP_Disambiguation_DumpHandler.ID;
 import DP_Disambiguation_DumpHandler.RedirectList;
 import DP_Disambiguation_DumpHandler.Tuple;
+import DP_Disambiguation_DumpHandler.WikiParser;
 import DP_Disambiguation_DumpHandler.WikipediaHandler;
 import DP_Disambiguation_FeatureBuilding.DBPediaFetcher;
 import DP_Disambiguation_FeatureBuilding.Entity;
@@ -40,6 +42,7 @@ import DP_entity_linking.dataset.DataSet;
 import DP_entity_linking.dataset.Record;
 import DP_entity_linking.search.Configuration;
 import DP_entity_linking.search.DefaultConfiguration;
+import DP_entity_linking.search.ResultPreprocessing;
 import DP_entity_linking.search.Search;
 
 
@@ -83,14 +86,25 @@ public class main {
 		
 		
 		//entityCandidatesLists.add(entityCandidates2);
+		
+		Dictionary anchorLinkDictionary = new Dictionary();
+		HashMap <String,String> redirectList = new HashMap <String,String>  ();
+		Categories categories = new Categories();		
+		DBpediaTypes dBpediaTypes = new DBpediaTypes();
+		DBPediaFetcher dbPediaFetcher = new DBPediaFetcher(dBpediaTypes.getdBpediaTypes());
+		EntityAnalyser analyser = new EntityAnalyser (anchorLinkDictionary, redirectList);
+		
+		WikiParser wikiFetcher = new WikiParser (categories,anchorLinkDictionary,properties.getProperty("knowledgeBasePath"),properties.getProperty("redirectsPath"), properties.getProperty("entityLinksPath"), properties.getProperty("categoriesPath"));
+		//wikiFetcher.createListFiles();
+		wikiFetcher.loadRedirectsToMemory();
+		wikiFetcher.loadAnchorLinksToMemory();
+		wikiFetcher.loadCategoriesToMemory();
+		
+		
 		/*
-		
-		
 		Dictionary anchorLinkDictionary = new Dictionary();
 		RedirectList listOfRedirects = new RedirectList();
 		Categories categories = new Categories();
-		DBpediaTypes dBpediaTypes = new DBpediaTypes();
-		DBPediaFetcher dbPediaFetcher = new DBPediaFetcher(dBpediaTypes.getdBpediaTypes());
 		EntityAnalyser analyser = new EntityAnalyser (anchorLinkDictionary, listOfRedirects);
 		
 		
@@ -98,6 +112,8 @@ public class main {
 		
 		wikiFetcher.getEntityList() ;
 		wikiFetcher.getEntityInformation() ;
+		*/
+		
 		
 		PageRankCalculator pageRankCalculator = new PageRankCalculator();
 		pageRankCalculator.performCalculation(anchorLinkDictionary.getIDs().values(),60,0.85);
@@ -105,12 +121,12 @@ public class main {
 		dbPediaFetcher.updateEntities(anchorLinkDictionary, properties.getProperty("dbPediaPath"));		
 		
 		
-		*/
+		
 		
 		
 				
-		//analyser.generatePositive(anchorLinkDictionary,properties.getProperty("positiveInstancesPath"));
-		//analyser.generateNegative(anchorLinkDictionary,properties.getProperty("negativeInstancesPath"));
+		analyser.generatePositive(anchorLinkDictionary,properties.getProperty("positiveInstancesPath"));
+		analyser.generateNegative(anchorLinkDictionary,properties.getProperty("negativeInstancesPath"));
 				
 		
 		//ResultAnalyser ra = new ResultAnalyser ();
@@ -122,7 +138,7 @@ public class main {
 		//VWWrapper.predict(properties.getProperty("vowpalPath"),properties.getProperty("testSetPathVW"), properties.getProperty("modelPathVW"), properties.getProperty("predictionsPathVW"));
 		
 		//xgBoostWrapper.convertFromVWFormat(properties.getProperty("trainSetPathVW"),properties.getProperty("trainSetPathXG"));		
-		xgBoostWrapper.learnModel(properties.getProperty("trainSetPathXG"), properties.getProperty("modelPathXG"));
+		//xgBoostWrapper.learnModel(properties.getProperty("trainSetPathXG"), properties.getProperty("modelPathXG"));
 		//xgBoostWrapper.predict(xgBoostInput, properties.getProperty("modelPathXG"));
 	
 				
@@ -131,8 +147,7 @@ public class main {
 		//ResultAnalyser.evaluateResults(0.5,properties.getProperty("testSetPathVW"), properties.getProperty("predictionsPathVW"),"vowpal");
 		
 		
-		//ResultAnalyser.orderCandidates(canonicID, entityCandidatesLists, anchorLinkDictionary, listOfRedirects, null , "vowpal");
-		
+		ResultAnalyser.orderCandidates(canonicID, entityCandidatesLists, anchorLinkDictionary, redirectList, null , "both");
 		
 		
 		
@@ -173,13 +188,42 @@ public class main {
         search.start();
         
         String canonicID = null;
+        ArrayList<ArrayList<String>> entityCandidatesLists = new ArrayList<ArrayList<String>> ();
                 
         for (Record record : records) {
             List<String> a = search.processRecord(record, null);
-            ArrayList<String> entityCandidates = new ArrayList<String>();
-            ArrayList<ArrayList<String>> entityCandidatesLists = new ArrayList<ArrayList<String>> ();
-            entityCandidatesLists.add(entityCandidates);
+             
+             ResultPreprocessing result = new ResultPreprocessing();
+             List<List<String>> finalResultPreprocessed = result.results(record.getQuestion(), a)
             
+            
+            //mozny problem s konverziou listu do arraylistu
+             * 
+             * 
+             * 
+             * 
+             * 
+             * 
+             * 
+             if (a.size() > 0)
+            {
+		            for (List<String>candidateList : finalResultPreprocessed)
+		            {
+		            	entityCandidatesLists.add(candidateList);
+		            }
+            }
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
             
             if (a.size() > 0)
             {

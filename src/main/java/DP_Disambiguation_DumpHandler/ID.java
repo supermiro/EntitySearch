@@ -10,8 +10,9 @@ public class ID {
 	private double pageRank = 0;
 	private String name = null;
 	private HashSet <String> categories = null;
-	private HashMap <ID,HashSet<Anchor>> outgoings = null;
-	private HashMap <ID,HashSet<Anchor>> ingoings = null;
+	private HashSet <Anchor> anchors = null;
+	private ArrayList <ID> outgoings = null;
+	private ArrayList <ID> ingoings = null;
 	private HashSet <DBpediaType> dBpediaTypes = null;
 	
 
@@ -21,8 +22,9 @@ public class ID {
 		super();
 		this.name = name;
 		this.categories = new HashSet <String> (10);
-		this.outgoings = new HashMap <ID,HashSet<Anchor>> (10);
-		this.ingoings = new HashMap <ID,HashSet<Anchor>> (10);
+		this.anchors = new HashSet <Anchor>();
+		this.outgoings = new ArrayList <ID> (10);
+		this.ingoings = new ArrayList <ID> (10);
 		this.dBpediaTypes = new HashSet <DBpediaType>(10);
 	}
 
@@ -58,60 +60,57 @@ public class ID {
 			this.categories.add(categoryName);
 	}
 
-	public HashMap<ID,HashSet<Anchor>> getOutgoingTuples() {
-		return outgoings;
+	public int getNumberOfOutgoingAnchors() {
+		
+		return outgoings.size();
 	}
 
-	public HashMap<ID,HashSet<Anchor>>  getIngoingTuples() {
-		return ingoings;
+	public int getNumberOfIngoingAnchors() {
+		return ingoings.size();
 	}
 	
 	public void addOutgoing(Tuple <Anchor,ID> outgoingTuple) {
-		/*
-		for (Tuple <Anchor,ID> tuple : this.outgoings)
-		{
-			if (tuple.getFirst() == outgoingTuple.getFirst() && tuple.getSecond() == outgoingTuple.getSecond())
-				return;
-		}
-		*/
-		HashSet<Anchor> anchors = this.outgoings.get(outgoingTuple.getSecond());
 		
-		if (anchors == null)
-			anchors = new HashSet<Anchor> ();
-		
-		anchors.add(outgoingTuple.getFirst());
-		
-		this.outgoings.put(outgoingTuple.getSecond(),anchors);
+		this.outgoings.add(outgoingTuple.getSecond());
+		this.anchors.add(outgoingTuple.getFirst());
 	}
 
 	public void addIngoing(Tuple <Anchor,ID> ingoingTuple) {
+		this.ingoings.add(ingoingTuple.getSecond());
 		
-		HashSet<Anchor> anchors = this.ingoings.get(ingoingTuple.getSecond());
-		
-		if (anchors == null)
-			anchors = new HashSet<Anchor> ();
-		
-		anchors.add(ingoingTuple.getFirst());
-		
-		this.ingoings.put(ingoingTuple.getSecond(),anchors);
 	}
 	
 	public int getNumberOfOutgoing(){
-		return this.outgoings.size();
+		return new HashSet(this.outgoings).size();
 	}
 	
 	public int getNumberOfIngoing(){
-		return this.ingoings.size();
+		return new HashSet(this.ingoings).size();
 	}
 	
-	public Set<ID> getIngoingIDs(){
+	public ArrayList <ID> getIngoingIDs(){
 		
-		return this.ingoings.keySet();
+		return this.ingoings;
 	}
 	
-	public Set<ID> getOutgoingIDs(){
+	public ArrayList <ID> getOutgoingIDs(){
 		
-		return this.outgoings.keySet();
+		return this.outgoings;
+	}
+	
+	public HashSet<Anchor> getAnchors(){
+		
+		return this.anchors;
+	}
+	
+	public ArrayList<ID> getIngoings(){
+		
+		return this.ingoings;
+	}
+	
+	public ArrayList<ID> getOutgoings(){
+		
+		return this.outgoings;
 	}
 	
 }

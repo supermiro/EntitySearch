@@ -17,11 +17,11 @@ public class GraphPatternAnalyser {
 	{
 		ArrayList<ID> oneHops = new ArrayList<ID> ();
 		
-		//get number of outgoingLinks from entity1
-		Set <ID> list1 = entity1.getOutgoingIDs();
+		//get number of outgoing links from entity1
+		Set <ID> list1 = new HashSet(entity1.getOutgoings());
 				
-		//get number of ingoingLinks to entity 2
-		Set <ID> list2 = entity2.getOutgoingIDs();
+				//get number of outgoing links from entity2
+		Set <ID> list2 = new HashSet(entity2.getOutgoings());
 				
 		//count overlappings between lists
 				
@@ -41,24 +41,23 @@ public class GraphPatternAnalyser {
 	
 		
 		//get number of outgoingLinks from entity1
-		HashMap<ID,HashSet<Anchor>> listTuples1 = entity1.getOutgoingTuples();
+		ArrayList<ID> listTuples1 = entity1.getOutgoings();
 				
 		//get number of ingoingLinks to entity 2
-		HashMap<ID,HashSet<Anchor>> listTuples2 = entity2.getOutgoingTuples();
+		ArrayList<ID> listTuples2 = entity2.getIngoings();
 		
+		for (ID id : listTuples1)
+		{
+			if (id == entity2)
+				counter++;
+		}
 		
-		for (ID id : listTuples1.keySet())
+		for (ID id : listTuples2)
 		{
-			if (id == entity2)			
-				counter += listTuples1.get(id).size();
+			if (id == entity1)
+				counter++;
 		}
-			
-		for (ID id : listTuples2.keySet())
-		{
-			if (id == entity2)			
-				counter += listTuples2.get(id).size();
-		}
-							
+									
 		return counter;
 	}
 		
@@ -68,10 +67,10 @@ public class GraphPatternAnalyser {
 		ArrayList<ID> listeners = new ArrayList<ID> ();
 		
 		//get number of outgoing links from entity1
-		Set <ID> list1 = entity1.getOutgoingIDs();
+		Set <ID> list1 = new HashSet(entity1.getOutgoings());
 		
 		//get number of outgoing links from entity2
-		Set <ID> list2 = entity2.getOutgoingIDs();
+		Set <ID> list2 = new HashSet(entity2.getOutgoings());
 		
 		//count overlappings between lists
 		
@@ -89,11 +88,11 @@ public class GraphPatternAnalyser {
 
 		ArrayList<ID> spokesmen = new ArrayList<ID> ();
 		
-		//get number of ingoing links to entity1
-		Set <ID> list1 = entity1.getIngoingIDs();
-		
-		//get number of in links to entity2
-		Set <ID> list2 = entity2.getIngoingIDs();
+		//get number of outgoing links from entity1
+				Set <ID> list1 = new HashSet(entity1.getIngoings());
+				
+				//get number of outgoing links from entity2
+				Set <ID> list2 = new HashSet(entity2.getIngoings());
 		
 		//count overlappings between lists
 		
