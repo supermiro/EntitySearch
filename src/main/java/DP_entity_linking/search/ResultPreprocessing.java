@@ -39,7 +39,7 @@ public class ResultPreprocessing {
         result.add(canonicList);
         question = question.replaceAll("[^a-zA-Z0-9]+", " ").toLowerCase().trim();
         this.setNewList(list);
-        this.deleteCorrespondedEntities(canonic);
+        this.deleteCorrespondingEntities(canonic);
         for (String l : newList) {
             boolean checkAlreadyExist = false;
             for (List<String> res : result){
@@ -107,7 +107,7 @@ public class ResultPreprocessing {
      * delete corresponding entities to canonic entity
      * @param canonic
      */
-    private void deleteCorrespondedEntities(String canonic){
+    private void deleteCorrespondingEntities(String canonic){
         String[] canonicArray =  canonic.split("_");
         //List<String> list = this.getNewList();
         Collections.sort(Arrays.asList(canonicArray), new Comparator<String>() {

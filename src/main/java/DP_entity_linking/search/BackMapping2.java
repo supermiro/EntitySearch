@@ -10,7 +10,7 @@ import java.util.*;
  */
 public class BackMapping2 implements BackMappingInterface {
     private BackMapping backMapping;
-    private static String FILE_NAME = "src/main/resources/data/stop-words_long.txt";
+    private static String FILE_NAME = "data/data/stop-words_long.txt";
     public BackMapping2() {
         backMapping = new BackMapping();
     }

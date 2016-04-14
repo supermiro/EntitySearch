@@ -26,7 +26,7 @@ public class MyAnalyzer extends Analyzer {
 
     public MyAnalyzer() throws IOException {
         synonyms = CountrySynonyms.buildMap();
-        stopWords = new StopWords(new File("src/main/resources/data/stop-words_long.txt"));
+        stopWords = new StopWords(new File("data/data/stop-words_long.txt"));
     }
 
     /* This is the only function that we need to override for our analyzer.
@@ -40,7 +40,6 @@ public class MyAnalyzer extends Analyzer {
         CharArraySet stopSet = CharArraySet.copy(Version.LUCENE_43, stopWords.getStopWords());
 
         Tokenizer tokenizer = new StandardTokenizer(Version.LUCENE_43, reader);
-        //tokenizer = new WikipediaTokenizer(reader);
         TokenStream filter = new EmptyStringTokenFilter(tokenizer);
         filter = new LowerCaseFilter(Version.LUCENE_43, filter);
         filter = new StopFilter(Version.LUCENE_43, filter, stopSet);
