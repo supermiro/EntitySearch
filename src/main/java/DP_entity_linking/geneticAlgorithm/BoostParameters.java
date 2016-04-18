@@ -17,16 +17,16 @@ public class BoostParameters implements GenSequence<Map<String, Float>>, Seriali
 
     public void create(Random rnd) {
         konfiguracia = new HashMap();
-        konfiguracia.put("title", new Interval(0.0f, 1.0f, 100)); // názov ?lánku vo Wikipédii,
-        konfiguracia.put("alt", new Interval(0.0f, 1.0f, 100));  //  alternatívne mená ?lánku,
-        konfiguracia.put("text", new Interval(0.0f, 1.0f, 100)); //  text ?lánku,
-        konfiguracia.put("sentence", new Interval(0.0f, 1.0f, 100)); //  prvá veta ?lánku,
-        konfiguracia.put("abstract", new Interval(0.0f, 1.0f, 100)); //  abstrakt textu ?lánku,
-        konfiguracia.put("section", new Interval(0.0f, 1.0f, 100)); //  sekcia hlavi?ky ?lánku,
-        konfiguracia.put("fb_name", new Interval(0.0f, 1.0f, 100)); //  Freebase názov ?lánku,
-        konfiguracia.put("fb_alias", new Interval(0.0f, 1.0f, 100)); //  alternatívne názvy ?lánku vo Freebase,
-        konfiguracia.put("anchor", new Interval(0.0f, 1.0f, 100));
-        konfiguracia.put("abs", new Interval(0.0f, 1.0f, 100));
+        konfiguracia.put("title", new Interval(0.0f, 1.0f, 100, 1.0f)); // názov ?lánku vo Wikipédii,
+        konfiguracia.put("alt", new Interval(0.0f, 1.0f, 100, 1.0f));  //  alternatívne mená ?lánku,
+        konfiguracia.put("text", new Interval(0.0f, 1.0f, 100, 0.3f)); //  text ?lánku,
+        konfiguracia.put("sentence", new Interval(0.0f, 1.0f, 100, 0.4f)); //  prvá veta ?lánku,
+        konfiguracia.put("abstract", new Interval(0.0f, 1.0f, 100, 0.3f)); //  abstrakt textu ?lánku,
+        konfiguracia.put("section", new Interval(0.0f, 1.0f, 100, 0.3f)); //  sekcia hlavi?ky ?lánku,
+        konfiguracia.put("fb_name", new Interval(0.0f, 1.0f, 100, 0.9f)); //  Freebase názov ?lánku,
+        konfiguracia.put("fb_alias", new Interval(0.0f, 1.0f, 100, 1.0f)); //  alternatívne názvy ?lánku vo Freebase,
+        konfiguracia.put("anchor", new Interval(0.0f, 1.0f, 100, 0.5f));
+        konfiguracia.put("abs", new Interval(0.0f, 1.0f, 100, 0.3f));
 
 
         for (Map.Entry<String, Interval> entry : konfiguracia.entrySet()) {

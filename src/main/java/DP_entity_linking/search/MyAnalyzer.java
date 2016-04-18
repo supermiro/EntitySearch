@@ -5,7 +5,6 @@ import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.Tokenizer;
 import org.apache.lucene.analysis.core.LowerCaseFilter;
 import org.apache.lucene.analysis.core.StopFilter;
-import org.apache.lucene.analysis.en.EnglishMinimalStemFilter;
 import org.apache.lucene.analysis.standard.StandardTokenizer;
 import org.apache.lucene.analysis.synonym.SynonymFilter;
 import org.apache.lucene.analysis.synonym.SynonymMap;
@@ -44,7 +43,7 @@ public class MyAnalyzer extends Analyzer {
         filter = new LowerCaseFilter(Version.LUCENE_43, filter);
         filter = new StopFilter(Version.LUCENE_43, filter, stopSet);
         filter = new SynonymFilter(filter, synonyms, true);
-        filter = new EnglishMinimalStemFilter(filter);
+        //filter = new EnglishMinimalStemFilter(filter);
         return new TokenStreamComponents(tokenizer, filter);
     }
 }

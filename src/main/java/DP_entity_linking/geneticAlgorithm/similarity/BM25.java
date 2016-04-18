@@ -15,9 +15,9 @@ public class BM25 implements GenSequence {
     private Interval value2;
 
     public BM25() {
-        this.value1 = new Interval(1.1f, 1.4f, 100);
+        this.value1 = new Interval(1.1f, 1.4f, 100, 1.4f);
         this.value1.setUsek(10);
-        this.value2 = new Interval(0.65f, 0.8f, 100);
+        this.value2 = new Interval(0.65f, 0.8f, 100, 0.8f);
         this.value2.setUsek(10);
     }
 

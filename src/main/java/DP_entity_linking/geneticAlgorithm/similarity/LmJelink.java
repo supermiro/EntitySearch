@@ -14,7 +14,7 @@ public class LmJelink implements GenSequence<Similarity> {
     private Interval value;
 
     public LmJelink() {
-        this.value = new Interval(0.000001f, 0.0001f, 100);
+        this.value = new Interval(0.000001f, 0.0001f, 100, 0.0001f);
         this.value.setUsek(100);
     }
 

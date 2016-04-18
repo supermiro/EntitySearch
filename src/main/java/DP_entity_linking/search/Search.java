@@ -229,7 +229,7 @@ public class Search {
         toBackMapping = backMapping.getToBackMapping();
         if (!toBackMapping.isEmpty()) {
             statistics.countBackMapped++;
-            LOGGER.info("QUESTION CAN BE BACKMAPPED: " + record.getQuestion());
+            //LOGGER.info("QUESTION CAN BE BACKMAPPED: " + record.getQuestion());
             String question = record.getUtterance();
             Collections.sort(toBackMapping, new Comparator<String>() {
                 @Override
@@ -254,7 +254,7 @@ public class Search {
                     Document docBackMapped = indexSearcher.doc(hitsBackMapped[j].doc);
                     String resultBMId = docBackMapped.get("title").trim().replace(" ", "_");
                     finalId.add(resultBMId.trim());
-                    LOGGER.info("ANSWERS FOR BACKMAPPED QUESTIONS: " + docBackMapped.get("title") + " --- back mapped---");
+                  //  LOGGER.info("ANSWERS FOR BACKMAPPED QUESTIONS: " + docBackMapped.get("title") + " --- back mapped---");
                 }
                 //LOGGER.info(question + ", " + answer);
 

@@ -9,12 +9,14 @@ import java.util.Random;
 public class Interval implements GenSequence<Float>, Serializable {
     float min; // 0.0001f;
     float max; // 0.000001f;
+    float probability;
     int pocetUsekov; // na kolko usekov to rozdelime?
     int aktualnyUsek;
 
-    public Interval(float min, float max, int pocetUsekov) {
+    public Interval(float min, float max, int pocetUsekov, float probability) {
         this.min = min;
         this.max = max;
+        this.probability = probability;
         this.pocetUsekov = pocetUsekov;
     }
 
@@ -40,7 +42,13 @@ public class Interval implements GenSequence<Float>, Serializable {
     }
 
     public void mutate(Random rnd) {
-        setUsek(rnd.nextInt(this.pocetUsekov));
+        float a = rnd.nextFloat();
+        if (a <= this.probability){
+            int nextInt = rnd.nextInt(this.pocetUsekov);
+            setUsek(nextInt);
+        } else {
+            setUsek(0);
+        }
     }
 
     public void create(Random rnd) {
