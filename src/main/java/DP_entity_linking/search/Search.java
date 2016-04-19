@@ -213,14 +213,14 @@ public class Search {
                 for (int i = 0; i < backMappedResults.size(); i++){
                     ScoreDoc hit = backMappedResults.get(i);
                     Document finalDoc = indexSearcher.doc(hit.doc);
-                    String resultId = finalDoc.get("title").trim().replaceAll("[^a-zA-Z0-9]+", " ").trim().replace(" ", "_");
+                    String resultId = finalDoc.get("title").trim().trim().replace(" ", "_");
                     finalId.add(resultId.trim());
                 }
             } else {
                 for (int i = 0; i < hits.length; i++) {
                     Document doc = indexSearcher.doc(hits[i].doc);
 
-                    finalId.add(doc.get("title").trim().replaceAll("[^a-zA-Z0-9]+", " ").trim().replace(" ", "_"));
+                    finalId.add(doc.get("title").trim().replace(" ", "_"));
                     return finalId;
                 }
             }
