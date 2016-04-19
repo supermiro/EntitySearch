@@ -15,7 +15,6 @@ public class LmJelink implements GenSequence<Similarity> {
 
     public LmJelink() {
         this.value = new Interval(0.000001f, 0.0001f, 100, 0.0001f);
-        this.value.setUsek(100);
     }
 
     @Override
@@ -31,5 +30,27 @@ public class LmJelink implements GenSequence<Similarity> {
     @Override
     public Similarity get() {
         return new LMJelinekMercerSimilarity( value.getCurrentPosition() );
+    }
+
+    @Override
+    public GenSequence<Similarity> clone() {
+        LmJelink clonedLmJelink = new LmJelink();
+        clonedLmJelink.value = (Interval) this.value.clone();
+        return clonedLmJelink;
+    }
+
+    @Override
+    public String toString() {
+        return "LmJelink{" +
+                "value=" + value +
+                '}';
+    }
+
+    public Interval getValue() {
+        return value;
+    }
+
+    public void setValue(Interval value) {
+        this.value = value;
     }
 }
