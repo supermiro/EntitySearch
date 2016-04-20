@@ -50,6 +50,7 @@ public class Search {
         iEvaluation = new SimpleEvaluation(indexSearcher);
         backMapping2 = new BackMapping2();
         backMapping1 = new BackMapping1();
+
     }
 
     public void start() {
@@ -202,8 +203,8 @@ public class Search {
             for (int i = 0; i < backMappedResults.size(); i++){
                 ScoreDoc hit = backMappedResults.get(i);
                 Document finalDoc = indexSearcher.doc(hit.doc);
-                String resultId = finalDoc.get("title").trim().replaceAll("[^a-zA-Z0-9]+", " ").trim().replace(" ", "_");
-                finalId.add(resultId.trim());
+                String resultId =  finalDoc.get("title").trim().replace(" ", "_");
+                finalId.add(resultId);
             }
             //LOGGER.info("FINAL RESULT IS: " + finalId);
 
@@ -213,14 +214,14 @@ public class Search {
                 for (int i = 0; i < backMappedResults.size(); i++){
                     ScoreDoc hit = backMappedResults.get(i);
                     Document finalDoc = indexSearcher.doc(hit.doc);
-                    String resultId = finalDoc.get("title").trim().trim().replace(" ", "_");
-                    finalId.add(resultId.trim());
+                    String wikiID = finalDoc.get("title").trim().replace(" ", "_");
+                     finalId.add(wikiID);
                 }
             } else {
                 for (int i = 0; i < hits.length; i++) {
                     Document doc = indexSearcher.doc(hits[i].doc);
-
-                    finalId.add(doc.get("title").trim().replace(" ", "_"));
+                    String wikiID = doc.get("title").trim().replace(" ", "_");
+                    finalId.add(wikiID);
                     return finalId;
                 }
             }
@@ -252,7 +253,8 @@ public class Search {
                 answer = record.getAnswer();
                 for (int j = 0; j < hitsBackMapped.length; j++) {
                     Document docBackMapped = indexSearcher.doc(hitsBackMapped[j].doc);
-                    String resultBMId = docBackMapped.get("title").trim().replace(" ", "_");
+                    String resultBMId =  docBackMapped.get("title").trim().replace(" ", "_");
+
                     finalId.add(resultBMId.trim());
                   //  LOGGER.info("ANSWERS FOR BACKMAPPED QUESTIONS: " + docBackMapped.get("title") + " --- back mapped---");
                 }

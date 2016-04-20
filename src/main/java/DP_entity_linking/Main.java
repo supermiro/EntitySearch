@@ -26,7 +26,7 @@ public class Main {
     public void normalStart() throws IOException, ParseException {
         DataSet dataset = new DataSet();
         List<Record> records = dataset.loadWebquestions();
-        records = records.subList(0, 3700);
+        records = records.subList(0, 10);
         //records = records.subList(0, 2030);
         Configuration conf;
         ResultPreprocessing result = new ResultPreprocessing();
@@ -66,8 +66,8 @@ public class Main {
 
         try {
             Main app = new Main();
-            geneticSolution.doJob();
-            //app.normalStart();
+            //geneticSolution.doJob();
+            app.normalStart();
 
         } catch (IOException ex) {
             LOGGER.error(" error: ", ex);
