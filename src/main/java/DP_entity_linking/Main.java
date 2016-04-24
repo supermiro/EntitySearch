@@ -10,7 +10,6 @@ import DP_entity_linking.search.Search;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.apache.lucene.queryparser.classic.ParseException;
-import util.XLS;
 
 import java.io.IOException;
 import java.util.List;
@@ -20,14 +19,13 @@ import java.util.Random;
  */
 public class Main {
     private static Logger LOGGER = Logger.getLogger(Main.class);
-    private XLS xls;
 
 
     public void normalStart() throws IOException, ParseException {
         DataSet dataset = new DataSet();
         List<Record> records = dataset.loadWebquestions();
-        records = records.subList(0, 10);
-        //records = records.subList(0, 2030);
+        //records = records.subList(0, 3700);
+        records = records.subList(0, 96);
         Configuration conf;
         ResultPreprocessing result = new ResultPreprocessing();
         conf = new DefaultConfiguration();
@@ -44,6 +42,8 @@ public class Main {
                 LOGGER.info("NOT FOUND");
             }
         }
+        int fitness = search.getScore();
+        LOGGER.info(fitness);
     }
 
 

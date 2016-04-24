@@ -14,8 +14,8 @@ import java.util.List;
  */
 public class DataSet {
     private static Logger LOGGER = Logger.getLogger(Search.class);
-    private static final File JSON_FILE = new File("data/webquestions.train");
-    //private static final File JSON_FILE = new File("data/webquestions.json");
+    //private static final File JSON_FILE = new File("data/webquestions.train");
+    private static final File JSON_FILE = new File("data/data.json");
 
     public static class Records extends ArrayList<Record> {
         public Records() {

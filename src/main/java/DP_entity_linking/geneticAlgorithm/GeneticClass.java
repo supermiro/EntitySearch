@@ -35,7 +35,7 @@ public class GeneticClass {
     public void doJob() throws IOException, ParseException {
         DataSet dataset = new DataSet();
         List<Record> records = dataset.loadWebquestions();
-        records = records.subList(0, 900);
+        records = records.subList(0, 1000);
         Search search = new Search();
 
         Chromosome defaultChromosome = new DefaultChromosome();
