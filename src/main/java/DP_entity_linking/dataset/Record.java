@@ -35,6 +35,9 @@ public class Record {
     }
 
     public String getAnswer() {
+        if (getUrl() == null) {
+            return " ";
+        }
         String path = this.getUrl().getPath();
         path = path.substring(path.lastIndexOf('/') + 1);
         String answer = path.replace("_", " ");
