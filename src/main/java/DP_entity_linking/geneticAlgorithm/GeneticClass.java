@@ -5,6 +5,7 @@ import DP_entity_linking.dataset.Record;
 import DP_entity_linking.search.Configuration;
 import DP_entity_linking.search.Search;
 import org.apache.log4j.Logger;
+import org.apache.lucene.document.Document;
 import org.apache.lucene.queryparser.classic.ParseException;
 import util.XLS;
 
@@ -82,7 +83,7 @@ public class GeneticClass {
             Configuration conf = population.get(i).get();
             LOGGER.info(conf);
             for (Record record : records) {
-                List<String> a = search.processRecord(record, conf);
+                List<Document> a = search.processRecord(record, conf);
             }
             int fitness = search.getScore();
             population.get(i).setFitness(fitness);

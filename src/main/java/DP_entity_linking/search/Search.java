@@ -57,7 +57,7 @@ public class Search {
         statistics = new SearchStatistics();
     }
 
-    public List<String> processRecord(Record r, Configuration conf) throws IOException, ParseException {
+    public List<Document> processRecord(Record r, Configuration conf) throws IOException, ParseException {
         if (conf == null){
             conf = new DefaultConfiguration();
         }
@@ -133,6 +133,7 @@ public class Search {
         ArrayList<String> toBackMapping = new ArrayList<String>();
         for (int i = 0; i < hits.length; i++) {
             Document doc = indexSearcher.doc(hits[i].doc);
+            LOGGER.info("title: " + doc.get("title"));
             if (doc.get("fb_id_erd") == null){
                 continue;
             }
@@ -178,9 +179,9 @@ public class Search {
         backMapping.setToBackMapping(toBackMapping);
         return backMappedResults;
     }
-    private List<String> retrieve(Record record, String query, Configuration conf) throws IOException, ParseException {
+    private List<Document> retrieve(Record record, String query, Configuration conf) throws IOException, ParseException {
 
-        List<String> finalId = new ArrayList<>();
+        List<Document> finalId = new ArrayList<>();
 
         ArrayList<String> toBackMapping = new ArrayList<String>();
         indexSearcher.setSimilarity(new MultiSimilarity(conf.getSims()));
@@ -206,10 +207,10 @@ public class Search {
             for (int i = 0; i < backMappedResults.size(); i++){
                 ScoreDoc hit = backMappedResults.get(i);
                 Document finalDoc = indexSearcher.doc(hit.doc);
-                String resultId =  finalDoc.get("title").trim().replace(" ", "_");
-                finalId.add(resultId);
+                //String resultId =  finalDoc.get("title")
+                finalId.add(finalDoc);
             }
-            LOGGER.info("FINAL RESULT IS: " + finalId);
+            //LOGGER.info("FINAL RESULT IS: " + finalId);
 
         } else {
             backMappedResults = addTobackMapping(hits, record, backMapping2);
@@ -217,14 +218,14 @@ public class Search {
                 for (int i = 0; i < backMappedResults.size(); i++){
                     ScoreDoc hit = backMappedResults.get(i);
                     Document finalDoc = indexSearcher.doc(hit.doc);
-                    String wikiID = finalDoc.get("title").trim().replace(" ", "_");
-                     finalId.add(wikiID);
+                    //String wikiID = finalDoc.get("title").trim().replace(" ", "_");
+                     finalId.add(finalDoc);
                 }
             } else {
                 for (int i = 0; i < hits.length; i++) {
                     Document doc = indexSearcher.doc(hits[i].doc);
-                    String wikiID = doc.get("title").trim().replace(" ", "_");
-                    finalId.add(wikiID);
+                    //String wikiID = doc.get("title").trim().replace(" ", "_");
+                    finalId.add(doc);
                     return finalId;
                 }
             }
@@ -256,9 +257,9 @@ public class Search {
                 answer = record.getAnswer();
                 for (int j = 0; j < hitsBackMapped.length; j++) {
                     Document docBackMapped = indexSearcher.doc(hitsBackMapped[j].doc);
-                    String resultBMId =  docBackMapped.get("title").trim().replace(" ", "_");
+                    //String resultBMId =  docBackMapped.get("title").trim().replace(" ", "_");
 
-                    finalId.add(resultBMId.trim());
+                    finalId.add(docBackMapped);
                   //  LOGGER.info("ANSWERS FOR BACKMAPPED QUESTIONS: " + docBackMapped.get("title") + " --- back mapped---");
                 }
                 //LOGGER.info(question + ", " + answer);

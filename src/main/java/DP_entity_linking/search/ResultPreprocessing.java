@@ -1,5 +1,8 @@
 package DP_entity_linking.search;
 
+import org.apache.lucene.document.Document;
+import org.apache.lucene.index.IndexableField;
+
 import java.util.*;
 
 /**
@@ -7,7 +10,7 @@ import java.util.*;
  */
 public class ResultPreprocessing {
 
-    private List<String> newList;
+    private List<Document> newList;
     private List<Integer> indexes;
 
     public List<Integer> getIndexes() {
@@ -20,27 +23,62 @@ public class ResultPreprocessing {
 
     public ResultPreprocessing() {
 
-        newList = new ArrayList<String>();
+        newList = new ArrayList<Document>();
         indexes = new ArrayList<Integer>();
     }
-    public List<String> getNewList() {
+    public List<Document> getNewList() {
         return newList;
     }
 
-    public void setNewList(List<String> newList) {
+    public void setNewList(List<Document> newList) {
         this.newList = newList;
     }
+    private String findCanonic (String question, List<Document> list) {
+        String canonic = list.get(0).get("title");
+        for (int i = 0; i < list.size(); i++) {
+            boolean stop = false;
+            IndexableField[] alts = list.get(i).getFields("alt");
+            String fb_name = list.get(i).get("fb_name");
+            String fb_alias = list.get(i).get("fb_alias");
+            String entittyTitle = list.get(i).get("title");
+            List<String> altNames = new ArrayList<String>();
+            for (IndexableField indexableField : alts) {
+                altNames.add(indexableField.toString());
+            }
+            altNames.add(entittyTitle);
+            altNames.add(fb_name);
+            altNames.add(fb_alias);
+            for (String altName : altNames) {
+                if (altName == null) {
+                    continue;
+                }
+                if (altName.indexOf(">") != -1) {
+                    altName = altName.substring(altName.indexOf(":") + 1, altName.indexOf(">") );
+                }
+                if (question.toLowerCase().contains(altName.toLowerCase())) {
+                    canonic = list.get(i).get("title");
+                    stop = true;
+                    break;
+                }
+            }
+            if (stop) {
+                break;
+            }
+        }
+        return canonic;
+    }
+    public List<List<String>> results(String question, List<Document> list){
+        String canonic = findCanonic(question,list);
 
-    public List<List<String>> results(String question, List<String> list){
-        String canonic = list.get(0);
         List<List<String>> result = new ArrayList<>();
         List<String> canonicList = new ArrayList<String>();
+        this.setNewList(list);
+        canonicList = this.addCorrespondingEntities(canonic);
+
         canonicList.add(canonic);
         result.add(canonicList);
         question = question.replaceAll("[^a-zA-Z0-9]+", " ").toLowerCase().trim();
-        this.setNewList(list);
-        this.deleteCorrespondingEntities(canonic);
-        for (String l : newList) {
+        for (Document l : newList) {
             boolean checkAlreadyExist = false;
             for (List<String> res : result){
                 if (res.contains(l)){
@@ -52,9 +90,9 @@ public class ResultPreprocessing {
                 continue;
             }
             List<String> grouped = new ArrayList<String>();
-            List<Integer> indexesFirst = this.findIndexes(question, l);
+            List<Integer> indexesFirst = this.findIndexes(question, l.get("title"));
             if (indexes != null){
-                for (String indexList : newList) {
+                for (Document indexList : newList) {
                     checkAlreadyExist = false;
                     for (List<String> res : result){
                         if (res.contains(indexList)){
@@ -65,12 +103,12 @@ public class ResultPreprocessing {
                     if (checkAlreadyExist){
                         continue;
                     }
-                    List<Integer> comparedIndexes = this.findIndexes(question, indexList);
+                    List<Integer> comparedIndexes = this.findIndexes(question, indexList.get("title"));
                     if (indexesFirst != null) {
                         int size = indexesFirst.size();
                         indexesFirst.retainAll(comparedIndexes);
                         if (size !=  (size - indexesFirst.size())){
-                            grouped.add(indexList);
+                            grouped.add(indexList.get("title"));
                         }
                     }
                 }
@@ -107,55 +145,30 @@ public class ResultPreprocessing {
      * delete corresponding entities to canonic entity
      * @param canonic
      */
-    private void deleteCorrespondingEntities(String canonic){
+    private List<String> addCorrespondingEntities(String canonic){
         String[] canonicArray =  canonic.split("_");
-        //List<String> list = this.getNewList();
         Collections.sort(Arrays.asList(canonicArray), new Comparator<String>() {
             @Override
             public int compare(String s, String t1) {
                 return t1.length() - s.length();
             }
         });
-        //delete entities which contains same words as canonic entity
+        List<String> canonicList = new ArrayList<String>();
         for (int i = 0; i < newList.size(); i++) {
-            int containCount = 0;
             boolean delete = false;
-            String item = newList.get(i);
-            if (item.toLowerCase().contains(canonic.toLowerCase())){
-                delete = true;
-            } else {
-                if (canonicArray.length <= 2){
-                    if ((item.toLowerCase()).contains(canonicArray[0].toLowerCase()) && !Character.isUpperCase(canonicArray[0].charAt(0))){
-                        delete = true;
-                    }
-                } else {
-                    String[] itemArray =  canonic.split("_");
-                    int countItemUpperCase = 0;
-                    for (String it : itemArray) {
-                        if (Character.isUpperCase(it.charAt(0))){
-                            countItemUpperCase++;
-                        }
-                    }
-                    if (countItemUpperCase == itemArray.length){
-                        delete = false;
-                    }
-                    else {
-                        for (String s : canonicArray) {
-                            if ((item.toLowerCase()).contains(s.toLowerCase())) {
-                                containCount++;
-                            }
-                        }
-
-                        if (containCount >= 2) {
-                            delete = true;
-                        }
-                    }
+            String entittyTitle = newList.get(i).get("title");
+                if (entittyTitle.indexOf("(") != -1) {
+                    entittyTitle = entittyTitle.substring(0, entittyTitle.indexOf("(") );
                 }
-            }
+                if (canonic.toLowerCase().contains(entittyTitle.toLowerCase().trim())) {
+                    canonicList.add(newList.get(i).get("title"));
+                    delete = true;
+                }
             if (delete) {
                 newList.remove(i);
                 i--;
             }
         }
+        return canonicList;
     }
 }

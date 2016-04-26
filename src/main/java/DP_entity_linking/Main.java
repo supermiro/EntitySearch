@@ -9,6 +9,7 @@ import DP_entity_linking.search.ResultPreprocessing;
 import DP_entity_linking.search.Search;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
+import org.apache.lucene.document.Document;
 import org.apache.lucene.queryparser.classic.ParseException;
 
 import java.io.IOException;
@@ -34,8 +35,10 @@ public class Main {
 
         for (Record record : records) {
             LOGGER.info("------------" + record.getUtterance() + "--------------");
-            List<String> a = search.processRecord(record, conf);
-
+            List<Document> a = search.processRecord(record, conf);
+            for(int i = 0; i < a.size(); i++) {
+                LOGGER.info(a.get(i).get("title"));
+            }
             if (a.size() > 0) {
                 List<List<String>> finalResultPreprocessed = result.results(record.getQuestion(), a);
                 LOGGER.info("+++++++++++++++++" + finalResultPreprocessed + "++++++++++==");
