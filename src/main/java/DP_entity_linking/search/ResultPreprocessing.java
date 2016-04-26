@@ -96,7 +96,14 @@ public class ResultPreprocessing {
                 continue;
             }
             List<String> grouped = new ArrayList<String>();
-            List<Integer> indexesFirst = this.findIndexes(question, l.get("title").replaceAll(" ", "_"));
+
+            String prepararedQuery =  l.get("title");
+            if (prepararedQuery.indexOf("(") != -1) {
+                prepararedQuery = prepararedQuery.substring(0, prepararedQuery.indexOf("("));
+            } else if (prepararedQuery.indexOf(",") != -1) {
+                prepararedQuery = prepararedQuery.substring(0, prepararedQuery.indexOf(","));
+            }
+            List<Integer> indexesFirst = this.findIndexes(question, prepararedQuery.trim().replaceAll(" ", "_"));
             if (indexes != null){
                 for (Document indexList : newList) {
                     checkAlreadyExist = false;
@@ -109,7 +116,13 @@ public class ResultPreprocessing {
                     if (checkAlreadyExist){
                         continue;
                     }
-                    List<Integer> comparedIndexes = this.findIndexes(question, indexList.get("title").replaceAll(" ", "_"));
+                    String comparedQuery =  indexList.get("title");
+                    if (comparedQuery.indexOf("(") != -1) {
+                        comparedQuery = comparedQuery.substring(0, comparedQuery.indexOf("("));
+                    } else if (comparedQuery.indexOf(",") != -1) {
+                        comparedQuery = comparedQuery.substring(0, comparedQuery.indexOf(","));
+                    }
+                    List<Integer> comparedIndexes = this.findIndexes(question, comparedQuery.trim().replaceAll(" ", "_"));
                     if (indexesFirst != null) {
                         int size = indexesFirst.size();
                         indexesFirst.retainAll(comparedIndexes);
@@ -164,13 +177,19 @@ public class ResultPreprocessing {
             boolean delete = false;
             String entittyTitle = newList.get(i).get("title");
                 if (entittyTitle.indexOf("(") != -1) {
-                    entittyTitle = entittyTitle.substring(0, entittyTitle.indexOf("(") );
+                    if (entittyTitle.substring(0, entittyTitle.indexOf("(") ).length() >= canonic.toLowerCase().length()) {
+                        entittyTitle = entittyTitle.substring(0, entittyTitle.indexOf("("));
+                    }
                 } else if (entittyTitle.indexOf(",") != -1) {
-                    entittyTitle = entittyTitle.substring(0, entittyTitle.indexOf(",") );
+                    if (entittyTitle.substring(0, entittyTitle.indexOf(",") ).length() >= canonic.toLowerCase().length()) {
+                        entittyTitle = entittyTitle.substring(0, entittyTitle.indexOf(","));
+                    }
                 }
                 if (canonic.toLowerCase().contains(entittyTitle.toLowerCase().trim().replaceAll(" ", "_").trim())) {
-                    canonicList.add(newList.get(i).get("title").replaceAll( " ", "_"));
-                    delete = true;
+                    if (newList.get(i).get("title").replaceAll( " ", "_").length() >= canonic.length()) {
+                        canonicList.add(newList.get(i).get("title").replaceAll(" ", "_"));
+                        delete = true;
+                    }
                 }
             if (delete) {
                 newList.remove(i);
