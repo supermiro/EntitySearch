@@ -101,7 +101,7 @@ public class ResultPreprocessing {
                 for (Document indexList : newList) {
                     checkAlreadyExist = false;
                     for (List<String> res : result){
-                        if (res.contains(indexList)){
+                        if (res.contains(indexList.get("title").trim().replaceAll(" ", "_"))){
                             checkAlreadyExist = true;
                             continue;
                         }
@@ -166,7 +166,7 @@ public class ResultPreprocessing {
                 if (entittyTitle.indexOf("(") != -1) {
                     entittyTitle = entittyTitle.substring(0, entittyTitle.indexOf("(") );
                 }
-                if (canonic.toLowerCase().contains(entittyTitle.toLowerCase().replaceAll(" ", "_").trim())) {
+                if (canonic.toLowerCase().contains(entittyTitle.toLowerCase().trim().replaceAll(" ", "_").trim())) {
                     canonicList.add(newList.get(i).get("title").replaceAll( " ", "_"));
                     delete = true;
                 }
