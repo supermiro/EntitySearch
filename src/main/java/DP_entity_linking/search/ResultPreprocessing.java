@@ -165,6 +165,8 @@ public class ResultPreprocessing {
             String entittyTitle = newList.get(i).get("title");
                 if (entittyTitle.indexOf("(") != -1) {
                     entittyTitle = entittyTitle.substring(0, entittyTitle.indexOf("(") );
+                } else if (entittyTitle.indexOf(",") != -1) {
+                    entittyTitle = entittyTitle.substring(0, entittyTitle.indexOf(",") );
                 }
                 if (canonic.toLowerCase().contains(entittyTitle.toLowerCase().trim().replaceAll(" ", "_").trim())) {
                     canonicList.add(newList.get(i).get("title").replaceAll( " ", "_"));
