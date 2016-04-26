@@ -25,7 +25,7 @@ public class Main {
         DataSet dataset = new DataSet();
         List<Record> records = dataset.loadWebquestions();
         //records = records.subList(0, 3700);
-        records = records.subList(0, 96);
+        records = records.subList(0, 500);
         Configuration conf;
         ResultPreprocessing result = new ResultPreprocessing();
         conf = new DefaultConfiguration();
@@ -35,6 +35,7 @@ public class Main {
         for (Record record : records) {
             LOGGER.info("------------" + record.getUtterance() + "--------------");
             List<String> a = search.processRecord(record, conf);
+
             if (a.size() > 0) {
                 List<List<String>> finalResultPreprocessed = result.results(record.getQuestion(), a);
                 LOGGER.info("+++++++++++++++++" + finalResultPreprocessed + "++++++++++==");
@@ -42,8 +43,8 @@ public class Main {
                 LOGGER.info("NOT FOUND");
             }
         }
-        int fitness = search.getScore();
-        LOGGER.info(fitness);
+        //int fitness = search.getScore();
+        //LOGGER.info(fitness);
     }
 
 

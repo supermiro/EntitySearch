@@ -133,6 +133,9 @@ public class Search {
         ArrayList<String> toBackMapping = new ArrayList<String>();
         for (int i = 0; i < hits.length; i++) {
             Document doc = indexSearcher.doc(hits[i].doc);
+            if (doc.get("fb_id_erd") == null){
+                continue;
+            }
             IndexableField[] alts = doc.getFields("alt");
             String entittyTitle = doc.get("title");
             List<String> altNames = new ArrayList<String>();
@@ -206,7 +209,7 @@ public class Search {
                 String resultId =  finalDoc.get("title").trim().replace(" ", "_");
                 finalId.add(resultId);
             }
-            //LOGGER.info("FINAL RESULT IS: " + finalId);
+            LOGGER.info("FINAL RESULT IS: " + finalId);
 
         } else {
             backMappedResults = addTobackMapping(hits, record, backMapping2);
