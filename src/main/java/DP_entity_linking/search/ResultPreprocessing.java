@@ -185,9 +185,22 @@ public class ResultPreprocessing {
                         entittyTitle = entittyTitle.substring(0, entittyTitle.indexOf(","));
                     }
                 }
-                if (canonic.toLowerCase().contains(entittyTitle.toLowerCase().trim().replaceAll(" ", "_").trim())) {
+
+                if (canonic.toLowerCase().contains(entittyTitle.toLowerCase().trim().replaceAll(" ", "_").trim())
+                        || entittyTitle.toLowerCase().trim().replaceAll(" ", "_").contains(canonic.toLowerCase())
+                        ) {
                     if (newList.get(i).get("title").replaceAll( " ", "_").length() >= canonic.length()) {
                         canonicList.add(newList.get(i).get("title").replaceAll(" ", "_"));
+                        delete = true;
+                    }
+
+                } else {
+                    int countOfMapped = 0;
+                    for(String c : canonicArray){
+                        if (entittyTitle.toLowerCase().trim().contains(c.toLowerCase()))
+                            countOfMapped++;
+                    }
+                    if(countOfMapped > 0){
                         delete = true;
                     }
                 }

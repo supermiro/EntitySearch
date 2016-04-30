@@ -202,7 +202,7 @@ public class Search {
 
         }
     // USE FOR BACKMAPPING
-        backMappedResults = addTobackMapping(hits, record, backMapping1);
+        backMappedResults = addTobackMapping(hits, record, backMapping2);
         if ( backMappedResults.size() > 0) {
             for (int i = 0; i < backMappedResults.size(); i++){
                 ScoreDoc hit = backMappedResults.get(i);
@@ -213,7 +213,7 @@ public class Search {
             //LOGGER.info("FINAL RESULT IS: " + finalId);
 
         } else {
-            backMappedResults = addTobackMapping(hits, record, backMapping2);
+            backMappedResults = addTobackMapping(hits, record, backMapping1);
             if ( backMappedResults.size() > 0) {
                 for (int i = 0; i < backMappedResults.size(); i++){
                     ScoreDoc hit = backMappedResults.get(i);
@@ -259,7 +259,7 @@ public class Search {
                     Document docBackMapped = indexSearcher.doc(hitsBackMapped[j].doc);
                     //String resultBMId =  docBackMapped.get("title").trim().replace(" ", "_");
 
-                    finalId.add(docBackMapped);
+                   // finalId.add(docBackMapped);
                   //  LOGGER.info("ANSWERS FOR BACKMAPPED QUESTIONS: " + docBackMapped.get("title") + " --- back mapped---");
                 }
                 //LOGGER.info(question + ", " + answer);
