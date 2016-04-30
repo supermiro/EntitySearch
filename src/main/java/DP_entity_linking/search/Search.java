@@ -10,16 +10,19 @@ import DP_entity_linking.evalution.SimpleEvaluation;
 import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
+import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexableField;
 import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
 import org.apache.lucene.queryparser.classic.ParseException;
+import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
+import org.apache.lucene.search.similarities.DefaultSimilarity;
 import org.apache.lucene.search.similarities.MultiSimilarity;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.MMapDirectory;
@@ -95,7 +98,31 @@ public class Search {
         }
         return fields;
     }
-
+    public List<String> mapFbId(String ids) throws ParseException, IOException {
+        List<String> titles = new ArrayList<>();
+        String result = "";
+        String[] idArray = ids.split(",");
+        for (String id : idArray){
+            id = id.substring(0, id.indexOf("{"));
+            String title = null;
+            Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_43);
+            QueryParser queryParser = new QueryParser(Version.LUCENE_43, "fb_id_erd", analyzer);
+            Query query = queryParser.parse(id);
+            Map<String, Float> boost = new HashMap<>();
+            boost.put("fb_id_erd", 1f);
+            String[] fields = prepareFields(boost);
+            //MultiFieldQueryParser parser = new MultiFieldQueryParser(Version.LUCENE_43, fields, analyzer, boost);
+            indexSearcher.setSimilarity(new DefaultSimilarity());
+            TopDocs results = indexSearcher.search(query, 1);
+            ScoreDoc[] hits = results.scoreDocs;
+            for (int i = 0; i < hits.length; i++) {
+                Document doc = indexSearcher.doc(hits[i].doc);
+                title = doc.get("title");
+                titles.add(title);
+            }
+        };
+        return titles;
+    }
     private final Query buildLuceneQuery(final String queryIn, Configuration conf) throws ParseException {
         Query queryL = null;
         String query = queryIn;
