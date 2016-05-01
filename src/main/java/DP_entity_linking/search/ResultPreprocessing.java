@@ -33,6 +33,13 @@ public class ResultPreprocessing {
     public void setNewList(List<Document> newList) {
         this.newList = newList;
     }
+
+    /**
+     *
+     * @param question
+     * @param list
+     * @return
+     */
     private String findCanonic (String question, List<Document> list) {
         String canonic = list.get(0).get("title").replaceAll(" ", "_");
         for (int i = 0; i < list.size(); i++) {
@@ -192,6 +199,8 @@ public class ResultPreprocessing {
                     if (newList.get(i).get("title").replaceAll( " ", "_").length() >= canonic.length()) {
                         canonicList.add(newList.get(i).get("title").replaceAll(" ", "_"));
                         delete = true;
+                    } else {
+                        delete = true;
                     }
 
                 } else {
@@ -207,6 +216,9 @@ public class ResultPreprocessing {
             if (delete) {
                 newList.remove(i);
                 i--;
+                if (newList.size() == 1) {
+                    i = -1;
+                }
             }
         }
         return canonicList;

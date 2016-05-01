@@ -88,6 +88,11 @@ public class Search {
         return statistics.getCountBackMapped();
     }
 
+    /**
+     *
+     * @param map
+     * @return
+     */
     private String[] prepareFields( Map<String, Float> map) {
         int size = map.size();
         String[] fields = new String[size];
@@ -98,6 +103,14 @@ public class Search {
         }
         return fields;
     }
+
+    /**
+     *
+     * @param ids
+     * @return
+     * @throws ParseException
+     * @throws IOException
+     */
     public List<String> mapFbId(String ids) throws ParseException, IOException {
         List<String> titles = new ArrayList<>();
         String result = "";
@@ -123,6 +136,14 @@ public class Search {
         };
         return titles;
     }
+
+    /**
+     *
+     * @param queryIn
+     * @param conf
+     * @return
+     * @throws ParseException
+     */
     private final Query buildLuceneQuery(final String queryIn, Configuration conf) throws ParseException {
         Query queryL = null;
         String query = queryIn;
@@ -149,6 +170,14 @@ public class Search {
         return queryL;
     }
 
+    /**
+     *
+     * @param hits
+     * @param record
+     * @param backMappingMethod
+     * @return
+     * @throws IOException
+     */
     private List<ScoreDoc> addTobackMapping(ScoreDoc[] hits, Record record, BackMappingInterface backMappingMethod) throws IOException {
         boolean backMapped_name = false;
         boolean backMapped = false;
@@ -206,6 +235,16 @@ public class Search {
         backMapping.setToBackMapping(toBackMapping);
         return backMappedResults;
     }
+
+    /**
+     *
+     * @param record
+     * @param query
+     * @param conf
+     * @return
+     * @throws IOException
+     * @throws ParseException
+     */
     private List<Document> retrieve(Record record, String query, Configuration conf) throws IOException, ParseException {
 
         List<Document> finalId = new ArrayList<>();

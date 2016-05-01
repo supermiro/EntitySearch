@@ -22,7 +22,7 @@ public class BackMapping2 implements BackMappingInterface {
         String result = "";
         form = form.replaceAll("[^a-zA-Z0-9]+", " ").trim();
         String [] split = form.split(" ");
-        split = new HashSet<String>(Arrays.asList(split)).toArray(new String[0]);
+        //split = new HashSet<String>(Arrays.asList(split)).toArray(new String[0]);
         if (split.length <= 2) {
             isMapped = query.toLowerCase().contains(form.toLowerCase().trim());
             backMapping.setIsMapped(isMapped);
