@@ -186,10 +186,14 @@ public class ResultPreprocessing {
                 if (entittyTitle.indexOf("(") != -1) {
                     if (entittyTitle.substring(0, entittyTitle.indexOf("(") ).length() >= canonic.toLowerCase().length()) {
                         entittyTitle = entittyTitle.substring(0, entittyTitle.indexOf("("));
+                    } else {
+                        delete = true;
                     }
                 } else if (entittyTitle.indexOf(",") != -1) {
                     if (entittyTitle.substring(0, entittyTitle.indexOf(",") ).length() >= canonic.toLowerCase().length()) {
                         entittyTitle = entittyTitle.substring(0, entittyTitle.indexOf(","));
+                    } else {
+                        delete = true;
                     }
                 }
 
