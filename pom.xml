@@ -130,8 +130,6 @@
             <artifactId>commons-cli</artifactId>
             <version>1.2</version>
         </dependency>
-
-
         <dependency>
         	<groupId>org.apache.commons</groupId>
         	<artifactId>commons-math3</artifactId>
@@ -179,7 +177,13 @@
     <artifactId>xgboost-predictor</artifactId>
     <version>0.1.7</version>
   </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>3.11</version>
+        </dependency>
     </dependencies>
+>>>>>>> 0798e8d6419e03b70147c6db3def3393a5b71252
 
     <build>
         <plugins>
@@ -240,6 +244,32 @@
 
                       </plugin>
           -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.4.1</version>
+                <configuration>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                    <archive>
+                        <manifest>
+                            <mainClass>DP_entity_linking.Main</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <!-- bind to the packaging phase -->
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
 
         </plugins>
     </build>

@@ -1,20 +1,18 @@
 package DP_entity_linking.dataset;
 
-import java.net.URI;
-
 /**
  * Created by miroslav.kudlac on 10/3/2015.
  */
 public class Record {
     private String utterance;
-    private URI url;
+    private String url;
     private String targetValue;
 
-    public URI getUrl() {
+    public String getUrl() {
         return url;
     }
 
-    public void setUrl(URI url) {
+    public void setUrl(String url) {
         this.url = url;
     }
 
@@ -35,10 +33,14 @@ public class Record {
     }
 
     public String getAnswer() {
-        String path = this.getUrl().getPath();
-        path = path.substring(path.lastIndexOf('/') + 1);
-        String answer = path.replace("_", " ");
-        return answer;
+        if (getUrl() == null) {
+            return " ";
+        }
+        return getUrl();
+       // String path = this.getUrl().getPath();
+       // path = path.substring(path.lastIndexOf('/') + 1);
+       // String answer = path.replace("_", " ");
+      //  return answer;
     }
 
     public String getQuestion() {
