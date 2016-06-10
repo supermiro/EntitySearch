@@ -2,7 +2,10 @@ package DP_entity_linking;
 
 import DP_entity_linking.dataset.DataSet;
 import DP_entity_linking.dataset.Record;
+<<<<<<< HEAD
 import DP_entity_linking.search.*;
+=======
+>>>>>>> 0798e8d6419e03b70147c6db3def3393a5b71252
 import DP_entity_linking.geneticAlgorithm.GeneticClass;
 import DP_entity_linking.search.Configuration;
 import DP_entity_linking.search.DefaultConfiguration;
@@ -26,6 +29,8 @@ public class Main {
     public void normalStart() throws IOException, ParseException {
         DataSet dataset = new DataSet();
         List<Record> records = dataset.loadWebquestions();
+/*
+<<<<<<< HEAD
         records = records.subList(0, 3700);
         Configuration conf;
         ResultPreprocessing result = new ResultPreprocessing();
@@ -36,6 +41,12 @@ public class Main {
        // conf = chromosome.get();
 
         // Defaultna konfiguracia
+        //records = records.subList(0, 3700);
+        records = records.subList(0, 5);
+        Configuration conf;
+        ResultPreprocessing result = new ResultPreprocessing();
+=======
+*/
         //records = records.subList(0, 3700);
         records = records.subList(0, 5);
         Configuration conf;

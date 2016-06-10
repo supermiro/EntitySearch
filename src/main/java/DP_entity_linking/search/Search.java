@@ -41,7 +41,6 @@ public class Search {
     private IndexSearcher indexSearcher;
     private SearchStatistics statistics;
     private BackMapping backMapping;
-
     private BackMappingInterface backMapping1;
     private BackMappingInterface backMapping2;
 
@@ -170,7 +169,6 @@ public class Search {
         mainQuery.add(new BooleanClause(categoryQuery, BooleanClause.Occur.MUST));*/
         return queryL;
     }
-
 
     /**
      *
@@ -332,6 +330,34 @@ public class Search {
                 return finalId;
             }
 =======
+
+        backMappedResults = addTobackMapping(hits, record, backMapping2);
+        if ( backMappedResults.size() > 0) {
+            for (int i = 0; i < backMappedResults.size(); i++){
+                ScoreDoc hit = backMappedResults.get(i);
+                Document finalDoc = indexSearcher.doc(hit.doc);
+                //String resultId =  finalDoc.get("title")
+                finalId.add(finalDoc);
+            }
+            //LOGGER.info("FINAL RESULT IS: " + finalId);
+
+        } else {
+            backMappedResults = addTobackMapping(hits, record, backMapping1);
+            if ( backMappedResults.size() > 0) {
+                for (int i = 0; i < backMappedResults.size(); i++){
+                    ScoreDoc hit = backMappedResults.get(i);
+                    Document finalDoc = indexSearcher.doc(hit.doc);
+                    //String wikiID = finalDoc.get("title").trim().replace(" ", "_");
+                     finalId.add(finalDoc);
+                }
+            } else {
+                for (int i = 0; i < hits.length; i++) {
+                    Document doc = indexSearcher.doc(hits[i].doc);
+                    //String wikiID = doc.get("title").trim().replace(" ", "_");
+                    finalId.add(doc);
+                    return finalId;
+                }
+            }
 */
         backMappedResults = addTobackMapping(hits, record, backMapping2);
         if ( backMappedResults.size() > 0) {
@@ -398,6 +424,7 @@ public class Search {
 
 =======
 */
+
                 answer = record.getAnswer();
                 for (int j = 0; j < hitsBackMapped.length; j++) {
                     Document docBackMapped = indexSearcher.doc(hitsBackMapped[j].doc);

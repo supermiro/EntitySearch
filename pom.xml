@@ -182,7 +182,8 @@
             <artifactId>poi</artifactId>
             <version>3.11</version>
         </dependency>
-    <!--/dependencies-->
+    </dependencies>
+>>>>>>> 0798e8d6419e03b70147c6db3def3393a5b71252
 
     <build>
         <plugins>
