@@ -29,7 +29,6 @@ public class DefaultConfiguration extends Configuration {
         boost.put("section", 0.68f);
         boost.put("sentence",  0.64f);
         boost.put("abs",  0.58f);
-
         setSims(sims);
         setBoost(boost);
     }

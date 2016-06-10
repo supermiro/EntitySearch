@@ -7,6 +7,13 @@
     <name>erd-contest</name>
     <description>Entity Linking Challenge</description>
 
+	<repositories>
+	  <repository>
+	    <id>bintray-komiya-atsushi-maven</id>
+	    <url>http://dl.bintray.com/komiya-atsushi/maven</url>
+	  </repository>
+	</repositories>
+
     <dependencies>
 
 
@@ -124,11 +131,59 @@
             <version>1.2</version>
         </dependency>
         <dependency>
+        	<groupId>org.apache.commons</groupId>
+        	<artifactId>commons-math3</artifactId>
+        </dependency>
+        <dependency>
+        	<groupId>org.apache.commons</groupId>
+        	<artifactId>commons-lang3</artifactId>
+        </dependency>
+        <dependency>
+        	<groupId>commons-io</groupId>
+        	<artifactId>commons-io</artifactId>
+        </dependency>
+        <dependency>
+        	<groupId>org.jblas</groupId>
+        	<artifactId>jblas</artifactId>
+        </dependency>
+        <dependency>
+        	<groupId>me.lemire.integercompression</groupId>
+        	<artifactId>JavaFastPFOR</artifactId>
+        </dependency>
+        <dependency>
+        	<groupId>com.esotericsoftware.kryo</groupId>
+        	<artifactId>kryo</artifactId>
+        </dependency>
+        <dependency>
+        	<groupId>com.github.johnlangford</groupId>
+        	<artifactId>vw-jni</artifactId>
+        	<version>8.1.2-SNAPSHOT</version>
+        </dependency>
+        
+        <dependency>
+        	<groupId>org.dmlc</groupId>
+        	<artifactId>xgboost4j</artifactId>
+        	<version>1.1</version>
+        </dependency>
+        
+        <dependency>
+			<groupId>com.github.johnlangford</groupId>
+			<artifactId>vw-jni</artifactId>
+			<version>8.1.0</version>
+		</dependency>
+
+  <dependency>
+    <groupId>biz.k11i</groupId>
+    <artifactId>xgboost-predictor</artifactId>
+    <version>0.1.7</version>
+  </dependency>
+        <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi</artifactId>
             <version>3.11</version>
         </dependency>
     </dependencies>
+>>>>>>> 0798e8d6419e03b70147c6db3def3393a5b71252
 
     <build>
         <plugins>
@@ -218,5 +273,39 @@
 
         </plugins>
     </build>
+    <dependencyManagement>
+    	<dependencies>
+    		<dependency>
+    			<groupId>org.apache.commons</groupId>
+    			<artifactId>commons-math3</artifactId>
+    			<version>3.5</version>
+    		</dependency>
+    		<dependency>
+    			<groupId>org.apache.commons</groupId>
+    			<artifactId>commons-lang3</artifactId>
+    			<version>3.3.2</version>
+    		</dependency>
+    		<dependency>
+    			<groupId>commons-io</groupId>
+    			<artifactId>commons-io</artifactId>
+    			<version>2.4</version>
+    		</dependency>
+    		<dependency>
+    			<groupId>org.jblas</groupId>
+    			<artifactId>jblas</artifactId>
+    			<version>1.2.3</version>
+    		</dependency>
+    		<dependency>
+    			<groupId>me.lemire.integercompression</groupId>
+    			<artifactId>JavaFastPFOR</artifactId>
+    			<version>0.0.12</version>
+    		</dependency>
+    		<dependency>
+    			<groupId>com.esotericsoftware.kryo</groupId>
+    			<artifactId>kryo</artifactId>
+    			<version>2.24.0</version>
+    		</dependency>
+    	</dependencies>
+    </dependencyManagement>
 </project>
 
